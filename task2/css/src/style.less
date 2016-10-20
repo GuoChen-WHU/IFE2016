@@ -1,0 +1,200 @@
+@header-color: #333;
+@header-height: 90px;
+@background-color: #dedede;
+@button-bc: #3355d0;
+@footer-height: 90px;
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: @background-color;
+}
+
+header {
+  overflow: hidden;
+  height: @header-height;
+  background-color: @header-color;
+}
+
+.hor-nav {
+  display: inline-block;
+  float: right;
+}
+
+.hor-ul {
+  overflow: hidden;
+}
+
+.hor-ul-li {
+  display: inline-block;
+  float: left;
+  margin-right: 1em;
+  line-height: @header-height;
+
+  a {
+    text-decoration: none;
+    color: white;
+  }
+
+  a:hover {
+    color: #999;
+  }
+}   
+
+.hor-ul-li:before {
+  content: "● ";
+  color: black;
+}
+
+.article {
+  margin: 30px;
+  padding: 30px;
+  background-color: white;
+  box-shadow: 2px 2px darken( @background-color, 20% );
+}
+
+.article-title {
+  margin-top: 10px;
+  margin-bottom: 20px;
+  font-size: 2em;
+}
+
+.article-subtitle {
+  margin-bottom: 20px;
+  color: #888;
+  font-size: 1.5em;
+}
+
+.article-meta {
+  margin-bottom: 20px;
+  color: #777;
+  font-size: .9em;
+}
+
+.article-section {
+  margin-bottom: 20px;
+}
+
+.article-indent-par {
+  text-indent: 2em;
+  line-height: 2em;
+  font-size: 1.2em; 
+}
+
+.article-par {
+  line-height: 2em;
+  font-size: 1.2em;
+}
+
+.nondec-ul {
+  margin-left: 2em;
+}
+
+.nondec-ul-li {
+  list-style: none;
+  font-size: 1.2em;
+  line-height: 2em;
+}
+
+.wrapped-figure {
+  display: inline-block;
+  padding: 10px;
+  border: 1px solid @background-color;
+}
+
+.wrapped-figure-caption {
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.indent-ol {
+  margin-left: 2em;
+}
+
+.indent-ol-li {
+}
+
+.my-table {
+  width: 100%;
+}
+
+.my-table-head {
+  color: white;
+  background-color: black;
+}
+
+.my-table-sum {
+  background-color: #ddd;
+}
+
+aside {
+  margin: 30px;
+  padding: 30px;
+  background-color: white;
+  box-shadow: 2px 2px darken( @background-color, 20% );
+}
+
+.aside-title {
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.form {
+
+}
+
+.form-item {
+  margin-bottom: 10px;
+}
+
+.form-item-label {
+  display: inline-block;
+  width: 35%;
+  margin-right: .5%;
+  text-align: right;
+  vertical-align: top;
+}
+
+.form-item-note {
+  margin-top: 10px;
+  margin-bottom: 20px;
+  margin-left: 35.8%;
+  font-size: .8em;
+  color: darken( @background-color, 20% );
+}
+
+.option {
+  margin-right: 5px;
+}
+
+.decription-area {
+  width: 50%;
+  height: 100px;
+}
+
+.form-button {
+  width: 100%;
+  height: 40px;
+  border-radius: 10px;
+  color: white;
+  background-color: @button-bc;
+}
+
+.form-button:hover {
+  background-color: darken( @button-bc, 20% );
+}
+
+footer {
+  box-sizing: border-box;
+  height: @footer-height;
+  padding-top: @footer-height * .3;
+  background-color: black;
+  text-align: center;
+}
+
+.footer-content {
+  color: white;
+}
