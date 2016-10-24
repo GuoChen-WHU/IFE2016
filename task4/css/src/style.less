@@ -1,0 +1,36 @@
+@bc-gray: #ccc;
+@bc-yellow: #fc0;
+@container-width: 400px;
+@container-height: 200px;
+@qurant-radius: 50px;
+
+body {
+  display: flex;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.container {
+  position: relative;
+  width: @container-width;
+  height: @container-height;
+  margin: auto;
+  background-color: @bc-gray;
+}
+
+.qurant {
+  width: @qurant-radius;
+  height: @qurant-radius;
+  background-color: @bc-yellow;
+}
+
+.bottomright {
+  border-bottom-right-radius: @qurant-radius;  
+}
+
+.topleft {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border-top-left-radius: @qurant-radius;  
+}
