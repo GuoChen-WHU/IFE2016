@@ -1,7 +1,9 @@
 @background-color: #dedede;
 @header-color: #333;
 @header-height: 90px;
-@margin-bottom: 20px;
+@aside-width: 400px;
+@article-margin: 30px;
+@text-margin-bottom: 20px;
 @button-bc: #3355d0;
 @footer-height: 90px;
 
@@ -14,22 +16,23 @@ body {
   background-color: @background-color;
 }
 
+/* header */
 header {
   overflow: hidden;
   height: @header-height;
   background-color: @header-color;
 }
 
-.nav {
+nav {
   display: inline-block;
   float: right;
 }
 
-.nav-ul {
+nav ul {
   overflow: hidden;
 }
 
-.nav-ul-li {
+nav ul li {
   display: inline-block;
   float: left;
   margin-right: 1em;
@@ -45,9 +48,31 @@ header {
   }
 }   
 
-.nav-ul-li:before {
+nav ul li:before {
   content: "● ";
   color: black;
+}
+
+/* main */
+/* Clearfix */
+main:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+//* left *//
+.wrapper {
+  float: left;
+  width: 100%;
+  margin-right: -@aside-width - @article-margin;
+}
+
+.left {
+  float: left;
+  width: auto;
+  min-width: 400px;
+  margin-right: @aside-width + @article-margin;
 }
 
 .article {
@@ -59,24 +84,28 @@ header {
 
 .article-title {
   margin-top: 10px;
-  margin-bottom: @margin-bottom;
+  margin-bottom: @text-margin-bottom;
   font-size: 2em;
 }
 
 .article-subtitle {
-  margin-bottom: @margin-bottom;
+  margin-bottom: @text-margin-bottom;
   color: #888;
   font-size: 1.5em;
 }
 
 .article-meta {
-  margin-bottom: @margin-bottom;
+  margin-bottom: @text-margin-bottom;
   color: #777;
   font-size: .9em;
 }
 
 .article-section {
-  margin-bottom: @margin-bottom;
+  margin-bottom: @text-margin-bottom;
+}
+
+.stretch {
+  width: 50%;
 }
 
 p {
@@ -92,18 +121,18 @@ p {
   list-style: none;
 }
 
-.wrapped {
+figure {
   display: inline-block;
   padding: 10px;
   border: 1px solid @background-color;
 }
 
-.wrapped figcaption {
+figcaption {
   margin-bottom: 10px;
   text-align: center;
 }
 
-.indentol {
+ol {
   margin-left: 2em;
 }
 
@@ -118,6 +147,14 @@ p {
 
 .table-sum {
   background-color: #ddd;
+}
+
+//* right *//
+.right {
+  float: left;
+  width: @aside-width;
+  margin-left: 0;
+  box-sizing: border-box;
 }
 
 .smaller {
@@ -138,7 +175,7 @@ p {
 
 .form-item-note {
   margin-top: 10px;
-  margin-bottom: @margin-bottom;
+  margin-bottom: @text-margin-bottom;
   margin-left: 35.8%;
   font-size: .8em;
   color: darken( @background-color, 20% );
@@ -165,6 +202,7 @@ p {
   background-color: darken( @button-bc, 20% );
 }
 
+/* footer */
 footer {
   height: @footer-height;
   text-align: center;
@@ -174,4 +212,30 @@ footer {
 .footer-content {
   line-height: @footer-height;
   color: white;
+}
+
+/* media query */
+@media (max-width: 1000px) {
+  .wrapper {
+    float: none;
+  }
+  .left {
+    float: none;
+    margin-right: 0;
+  }
+  .right {
+    float: none;
+    margin-left: @article-margin;
+  }
+}
+
+@media (max-width: 720px) {
+  header {
+    height: auto;
+    text-align: center;
+  }
+
+  nav {
+    float: none;
+  }
 }
