@@ -1,0 +1,292 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-width: 1280px;
+  font-size: 1em;
+  font-family: 'Microsoft YaHei';
+}
+
+a {
+  text-decoration: none;
+}
+
+li {
+  list-style: none;
+}
+
+/* Start header */
+header {
+  height: 60px;
+}
+
+.logo {
+  display: inline-block;
+  margin-left: 5%;
+  font-size: 1.4em;
+  line-height: 60px;
+}
+
+.logo img {
+  vertical-align: middle;
+}
+
+.nav {
+  position: relative;
+  display: inline-block;
+  float: right;
+  width: 40%;
+  margin-right: 5%;
+}
+
+.nav li {
+  float: left;
+  width: 16.6%;
+  text-align: center;
+}
+
+.nav li a {
+  display: block;
+  width: 100%;
+  padding-top: 18px;
+  padding-bottom: 19px;
+  color: #888;
+}
+
+.nav li a:hover {
+  color: #ed4f4d;
+}
+
+.login-logo {
+  vertical-align: middle;
+}
+
+.move {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 16.7%;
+  border-top: 5px solid #ed4f4d;
+
+  transition: left 0.4s;
+}
+
+.nav li:nth-child(1):hover~.move{
+  left: 0;
+}
+
+.nav li:nth-child(2):hover~.move{
+  left: 16.7%;
+}
+
+.nav li:nth-child(3):hover~.move{
+  left: 33.3%;
+}
+
+.nav li:nth-child(4):hover~.move{
+  left: 50%;
+}
+
+.nav li:nth-child(5):hover~.move{
+  left: 66.7%;
+}
+
+.nav li:nth-child(6):hover~.move{
+  left: 83.3%;
+}
+/* End header */
+
+/* Start title */
+.title {
+  position: relative;
+  width: 100%;
+  height: 692px;
+  margin-top: -2px;
+  overflow: hidden;
+}
+
+.title img {
+  width: 100%;
+}
+
+.title h1 {
+  position: absolute;
+  top: 30%;
+  left: 10%;
+  font-size: 3.4em;
+  font-weight: lighter;
+  color: #fff;
+}
+
+.title h2 {
+  position: absolute;
+  top: 43%;
+  left: 10%;
+  font-size: 1.3em;
+  font-weight: lighter;
+  color: #fff;
+}
+
+.title h2 + h2 {
+  top: 48%;
+}
+
+.title-button {
+  position: absolute;
+  top: 65%;
+  left: 10%;
+  display: block;
+  width: 330px;
+  height: 64px;
+  font-size: 2em;
+  line-height: 64px;
+  color: #fff;
+  text-align: center;
+  background-color: #ed4f4d;
+}
+
+.title-button:hover {
+  background-color: darken(#ed4f4d, 10%);
+}
+/* End title */
+
+/* Start cols */
+.cols {
+  padding-top: 40px;
+  padding-bottom: 70px;
+  overflow: hidden;
+}
+
+.col {
+  width: 25%;
+  float: left;
+  text-align: center;
+}
+
+.col-description {
+  margin-top: 40px;
+  padding-left: 21%;
+  padding-right: 21%;
+  color: #555;
+  border-right: 2px solid #888;
+}
+/* End cols */
+
+/* Start question */
+.question {
+  height: 360px;
+  padding-top: 80px;
+  padding-bottom: 70px;
+  text-align: center;
+  background-color: #edecec;
+  box-sizing: border-box;
+}
+
+.question h1 {
+  margin-top: 30px;
+  font-size: 4em;
+  font-weight: lighter;
+  color: #a1a1a1;
+}
+/* End question */
+
+/* Start search */
+.search {
+  height: 340px;
+  padding-top: 50px;
+  padding-bottom: 120px;
+  text-align: center;
+  background-image: url("../../img/search-bg.jpg");
+  background-repeat: no-repeat;
+  background-size: 100% auto;
+  box-sizing: border-box;
+}
+
+.search h1 {
+  margin-bottom: 5px;
+  font-size: 1.4em;
+  font-weight: lighter;
+  color: #fff;
+}
+
+.em-target:hover~.emphasize {
+  width: 200px;
+}
+
+.emphasize {
+  width: 30px;
+  height: 3px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #fff;
+  transition: width 0.4s;
+}
+
+.search-description {
+  margin-top: 15px;
+  font-size: .8em;
+  color: #fff;
+}
+
+.search-form {
+  width: 90%;
+  margin-top: 50px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.select-awesome {
+  /* reset default style first */
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+
+  position: relative;
+  width: 20%;
+  height: 36px;
+  margin-right: 2%;
+  padding-left: 1%;
+  color: #999;
+  background: #fff url("../../img/select-down.png") 97% no-repeat;
+  border: none;
+}
+
+.select-awesome option {
+  width: 100%;
+  height: 26px;
+  padding-left: 25px;
+  line-height: 26px;
+  color: #666;
+  background-color: #e3e3e3;
+  border: none;
+}
+
+.select-awesome option:hover,
+.select-awesome option:checked {
+  color: #fff;
+  background-image: url("../../img/option-bg.png");
+}
+
+.search-form button {
+  width: 20%;
+  height: 36px;
+  letter-spacing: 25px;
+  color: #fff;
+  background-color: #ed4f4d;
+  border: none;
+
+  transition: background-color .4s;
+}
+
+.search-form button:hover {
+  background-color: darken(#ed4f4d, 10%);
+}
+/* End search */
+
+/* Start activity */
+.activity {
+  height: 606px;
+  background-color: #f7f7f7;
+}
