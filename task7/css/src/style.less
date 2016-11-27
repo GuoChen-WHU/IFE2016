@@ -5,11 +5,12 @@
 
 body {
   min-width: 1280px;
-  font-size: 1em;
+  font-size: 62.5%;
   font-family: 'Microsoft YaHei';
 }
 
 a {
+  color: inherit;
   text-decoration: none;
 }
 
@@ -17,49 +18,71 @@ li {
   list-style: none;
 }
 
+h1 {
+  font-size: 6em;
+  font-weight: lighter;
+}
+
+h2 {
+  font-size: 2.1em;
+  font-weight: lighter;
+}
+
+h3 {
+  font-size: 1.4em;
+  font-family: 'SimHei';
+  font-weight: lighter;
+  line-height: 18px;
+}
+
+p {
+  font-size: 1.4em;
+}
+
 /* Start header */
 header {
-  height: 60px;
+  height: 57px;
 }
 
 .logo {
   display: inline-block;
   margin-left: 5%;
-  font-size: 1.4em;
-  line-height: 60px;
-}
-
-.logo img {
-  vertical-align: middle;
+  padding-left: 45px;
+  font-family: 'SimHei';
+  line-height: 57px;
+  color: #393a3a;
+  background-image: url('../../img/logo.png');
+  background-repeat: no-repeat;
+  background-position: center left;
 }
 
 .nav {
   position: relative;
-  display: inline-block;
   float: right;
   width: 40%;
   margin-right: 5%;
 }
 
-.nav li {
+.nav>li {
   float: left;
   width: 16.6%;
   text-align: center;
 }
 
-.nav li a {
+.nav>li>a {
   display: block;
   width: 100%;
-  padding-top: 18px;
-  padding-bottom: 19px;
-  color: #888;
+  font-size: 1.4em;
+  line-height: 57px;
+  color: #393a3a;
 }
 
-.nav li a:hover {
-  color: #ed4f4d;
+.nav>li>a:hover {
+  color: #e74f4d;
 }
 
 .login-logo {
+  margin-right: 5px;
   vertical-align: middle;
 }
 
@@ -68,7 +91,7 @@ header {
   bottom: 0;
   left: 0;
   width: 16.7%;
-  border-top: 5px solid #ed4f4d;
+  border-top: 5px solid #e74f4d;
 
   transition: left 0.4s;
 }
@@ -101,54 +124,40 @@ header {
 /* Start title */
 .title {
   position: relative;
-  width: 100%;
   height: 692px;
-  margin-top: -2px;
   overflow: hidden;
+  background-image: url('../../img/title.jpg');
+  background-size: 100% auto;
 }
 
-.title img {
-  width: 100%;
+.title-mask {
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
 }
 
-.title h1 {
+.title-content {
   position: absolute;
   top: 30%;
   left: 10%;
-  font-size: 3.4em;
-  font-weight: lighter;
+  line-height: 1.5;
   color: #fff;
-}
-
-.title h2 {
-  position: absolute;
-  top: 43%;
-  left: 10%;
-  font-size: 1.3em;
-  font-weight: lighter;
-  color: #fff;
-}
-
-.title h2 + h2 {
-  top: 48%;
 }
 
 .title-button {
-  position: absolute;
-  top: 65%;
-  left: 10%;
   display: block;
   width: 330px;
   height: 64px;
-  font-size: 2em;
+  margin-top: 60px;
+  font-size: 30px;
   line-height: 64px;
-  color: #fff;
   text-align: center;
-  background-color: #ed4f4d;
+  background-color: #e74f4d;
+
+  transition: background-color 0.5s;
 }
 
 .title-button:hover {
-  background-color: darken(#ed4f4d, 10%);
+  background-color: darken(#e74f4d, 10%);
 }
 /* End title */
 
@@ -167,10 +176,10 @@ header {
 
 .col-description {
   margin-top: 40px;
-  padding-left: 21%;
-  padding-right: 21%;
-  color: #555;
-  border-right: 2px solid #888;
+  padding-left: 22%;
+  padding-right: 22%;
+  color: #767777;
+  border-right: 2px solid;
 }
 /* End cols */
 
@@ -178,16 +187,15 @@ header {
 .question {
   height: 360px;
   padding-top: 80px;
-  padding-bottom: 70px;
   text-align: center;
   background-color: #edecec;
   box-sizing: border-box;
 }
 
-.question h1 {
+.question-title {
   margin-top: 30px;
-  font-size: 4em;
-  font-weight: lighter;
+  font-size: 5.4em;
+  font-family: 'SimHei';
   color: #a1a1a1;
 }
 /* End question */
@@ -195,39 +203,37 @@ header {
 /* Start search */
 .search {
   height: 340px;
-  padding-top: 50px;
-  padding-bottom: 120px;
+  color: #fff;
   text-align: center;
   background-image: url("../../img/search-bg.jpg");
   background-repeat: no-repeat;
   background-size: 100% auto;
+}
+
+.search-mask {
+  height: 100%;
+  padding-top: 50px;
+  background-color: rgba(156, 107, 107, 0.4);
   box-sizing: border-box;
-}
-
-.search h1 {
-  margin-bottom: 5px;
-  font-size: 1.4em;
-  font-weight: lighter;
-  color: #fff;
-}
-
-.em-target:hover~.emphasize {
-  width: 200px;
 }
 
 .emphasize {
   width: 30px;
   height: 3px;
+  margin-top: 5px;
+  margin-bottom: 20px;
   margin-left: auto;
   margin-right: auto;
   background-color: #fff;
   transition: width 0.4s;
 }
 
-.search-description {
-  margin-top: 15px;
-  font-size: .8em;
-  color: #fff;
+.em-target:hover~.emphasize {
+  width: 200px;
+}
+
+.small-p {
+  font-size: 1.2em;
 }
 
 .search-form {
@@ -256,11 +262,12 @@ header {
 .select-awesome option {
   width: 100%;
   height: 26px;
+  padding-top: 3px;
   padding-left: 25px;
-  line-height: 26px;
   color: #666;
+  vertical-align: middle;
   background-color: #e3e3e3;
-  border: none;
+  box-sizing: border-box;
 }
 
 .select-awesome option:hover,
@@ -269,24 +276,440 @@ header {
   background-image: url("../../img/option-bg.png");
 }
 
-.search-form button {
+.search-form-submit {
   width: 20%;
   height: 36px;
+  font-size: 1.4em;
+  font-weight: bold;
   letter-spacing: 25px;
   color: #fff;
-  background-color: #ed4f4d;
+  background-color: #e74f4d;
   border: none;
 
   transition: background-color .4s;
 }
 
 .search-form button:hover {
-  background-color: darken(#ed4f4d, 10%);
+  background-color: darken(#e74f4d, 10%);
 }
 /* End search */
 
 /* Start activity */
 .activity {
+  width: 100%;
   height: 606px;
+  padding-top: 100px;
+  padding-right: 10%;
+  padding-left: 10%;
   background-color: #f7f7f7;
+  box-sizing: border-box;
 }
+
+.activity-theme {
+  float: left;
+  width: 25%;
+  text-align: center;
+}
+
+.activity-theme figcaption {
+  margin: 5px 0;
+}
+
+.activity-theme .small-p {
+  margin-top: 3px;
+  color: #888;
+}
+
+.activity-title {
+  letter-spacing: 34px;
+  text-indent: 34px;
+}
+/* End activity */
+
+/* Start time */
+.time {
+  height: 566px;
+  overflow: hidden;
+}
+
+.time-left {
+  float: left;
+  width: 66%;
+  height: 566px;
+  background-image: url("../../img/time-bg.jpg");
+  background-size: 100% auto;
+}
+
+.time-left-title {
+  margin-top: 125px;  
+  text-align: center;
+  color: #fff;
+}
+
+.small-h1 {
+  font-size: 5em;
+}
+
+.big-h1 {
+  margin-top: -45px;
+  margin-bottom: -20px;
+  font-size: 15.8em;
+}
+
+.loose-h2 {
+  line-height: 2;
+}
+
+.time-right {
+  position: relative;
+  display: table;
+  float: left;
+  width: 34%;
+  height: 566px;
+}
+
+.time-right:before {
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  width: 0;
+  height: 0;
+  content: "";
+  border-width: 15px 25px 15px 25px;
+  border-style: solid;
+  border-color: transparent;
+  border-right-color: #fff;
+}
+
+.slide {
+  display: table-cell;
+  padding-right: 10%;
+  padding-left: 10%;
+  vertical-align: middle;
+}
+
+.slide-item {
+  display: none;
+  margin-bottom: 20px;
+}
+
+.slide-item.active {
+  display: block;
+}
+
+.slide-item-title {
+  margin-bottom: 22px;
+  font-family: 'SimHei';
+  text-align: center;
+}
+
+.slide-item-num {
+  color: #e74f4f;
+}
+
+.slide-item-body {
+  margin-bottom: 20px;
+  font-size: 1.2em;
+  font-family: 'SimSun';
+  line-height: 3em;
+  color: #aaa;
+}
+
+.slide-item-footer {
+  display: block;
+  width: 106px;
+  margin-right: auto;
+  margin-left: auto;
+  font-size: 1.2em;
+  line-height: 33px;
+  text-align: center;
+  color: #e25c60;
+  border: 1px solid;
+}
+
+.slide-item-footer:hover {
+  color: #fff;
+  background-color: #e25c60;
+}
+
+.slide-control {
+  text-align: center;
+}
+
+.slide-control-button {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin: 5px;
+  border-radius: 5px;
+  border: 1px #929292 solid;
+}
+
+.slide-control-button:hover {
+  background-color: #929292;
+}
+/* End time */
+
+/* Start about */
+.about {
+  overflow: hidden;
+}
+
+.about-left {
+  display: table;
+  float: left;
+  width: 33%;
+  height: 520px;
+  color: #fff;
+  background-color: #e74f4d;
+}
+
+.about-content {
+  display: table-cell;
+  font-family: 'SimHei';
+  line-height: 30px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.about-content-more {
+  display: block;
+  width: 170px;
+  margin-right: auto;
+  margin-left: auto;
+  font-size: 2.1em;
+  line-height: 44px;
+  border: 1px solid;
+}
+
+.about-content-more:hover {
+  background-color: darken(#e74f4d, 10%);
+}
+
+.about-middle {
+  display: table;
+  float: left;
+  width: 33%;
+  height: 520px;
+}
+
+.about-middle .emphasize {
+  background-color: #aaa;
+}
+
+.about-middle .about-content-more {
+  color: #e74f4d;
+}
+
+.about-middle .about-content-more:hover {
+  color: #fff;
+  background-color: #e74f4d;
+}
+
+.about-right {
+  float: left;
+  width: 34%;
+  height: 520px;
+  background-image: url('../../img/about-right-bg.png');
+  background-size: 100% auto;
+}
+/* End about */
+
+/* Start signup */
+.signup {
+  overflow: hidden;
+  padding-right: 12%;
+  padding-left: 12%;
+}
+
+.signup-top {
+  display: table;
+  width: 100%;
+  height: 300px;
+}
+
+.signup-title {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.signup-title h2 {
+  font-family: 'SimHei';
+  line-height: 30px;
+}
+
+.signup-title .emphasize {
+  background-color: #e74f4d;
+}
+
+.signup-title-par {
+  font-size: 12px;
+  line-height: 18px;
+  color: #aaa;
+}
+
+.signup-left {
+  float: left;
+  width: 28%;
+  height: 452px;
+}
+
+.signup-routine {
+  color: #888;
+  margin-bottom: 50px;
+}
+
+.signup-routine-title {
+  margin-bottom: 15px;
+  color: #231815
+}
+
+.signup-routine-content {
+  font-size: 1.2em;
+  line-height: 21px;
+}
+
+.more {
+  display: block;
+  float: right;
+  width: 42px;
+  font-size: 1.2em;
+  font-family: 'SimSun';
+  text-align: right;
+  background-image: url('../../img/more.png');
+  background-repeat: no-repeat;
+  background-position: center left;
+}
+
+.signup-right {
+  float: left;
+  width: 72%;
+  height: 452px;
+  padding-left: 75px;
+  box-sizing: border-box;
+}
+
+.signup-item, 
+.signup-description {
+  margin-bottom: 15px;
+  padding-left: 15px;
+  background-color: #eee;
+  border: none;
+  box-sizing: border-box;
+}
+
+.signup-item {
+  width: 47%;
+  height: 40px;
+  margin-right: 2%;
+}
+
+.signup-item::-webkit-input-placeholder,
+.signup-description::-webkit-input-placeholder {
+  font-size: 12px;
+  font-family: 'SimSun';
+  color: #231815;
+}
+
+.signup-description {
+  -webkit-appearance: none;
+
+  width: 97%;
+  height: 120px;
+  padding-top: 10px;
+}
+
+.signup-submit {  
+  width: 97%;
+  height: 40px;
+  font-size: 12px;
+  line-height: 40px;
+  font-family: 'SimSun';
+  color: #231815;
+  text-align: center;
+  background-color: #eee;
+}
+
+.signup-submit:hover {
+  background-color: darken(#eee, 10%);
+}
+/* End signup */
+
+/* Start contact */
+.contact {
+  display: table;
+  width: 100%;
+  height: 360px;
+  color: #fff;
+  background-color: #32353e;
+}
+
+.contact-content {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.contact-content-title {
+  line-height: 36px;
+  font-family: 'SimHei';
+}
+
+.contact-content-p {
+  font-size: 12px;
+  line-height: 18px;
+  font-family: 'SimSun';
+}
+
+.contact-form {
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
+
+.contact-email {
+  width: 432px;
+  height: 40px;
+  padding-left: 10px;
+  border: none;
+}
+
+.contact-submit {
+  width: 80px;
+  height: 40px;
+  margin-left: -2px;
+  font-size: 15px;
+  text-indent: 8px;
+  letter-spacing: 8px;
+  color: #fff;
+  background-color: #707278;
+  border: none;
+}
+
+.contact-submit:hover {
+  background-color: darken(#707278, 10%);
+}
+/* End contact */
+
+/* Start footer */
+footer {
+  position: relative;
+  height: 58px;
+  color: #fff;
+  background-color: #303039;
+}
+
+.span-left {
+  position: absolute;
+  top: 26px;
+  left: 47px;
+  font-size: 12px;
+  font-family: 'SimSun';
+}
+
+.span-right {
+  position: absolute;
+  top: 26px;
+  right: 38px;
+}
+/* End footer */
