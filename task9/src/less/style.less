@@ -1,0 +1,252 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Microsoft YaHei';
+  font-size: 62.5%;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  vertical-align: middle;
+}
+
+li {
+  list-style: none;
+}
+
+h1 {
+  font-size: 1.4em;
+}
+
+p, span {
+  font-size: 1.2em;
+}
+
+/* Start header */
+.header-full {
+  height: 56px;
+  padding-right: 90px;
+  line-height: 56px;
+  color: #fff;
+  text-align: right;
+  background-image: url('../../img/header-logo.png');
+  background-repeat: no-repeat;
+  background-position: 50px center;
+  background-color: #2189bf;
+}
+
+.header-search {
+  width: 315px;
+  height: 29px;
+  padding-left: 10px;
+  background-image: url('../../img/header-search.png');
+  background-position: 16px center;
+  background-repeat: no-repeat;
+  border-width: 0;
+  border-radius: 15px;
+}
+
+.header-search:focus {
+  background-image: none;
+}
+
+.login {
+  display: inline-block;
+  margin-left: 10px;
+  padding-left: 25px;
+  font-family: 'SimHei';
+  background-image: url('../../img/login.png');
+  background-repeat: no-repeat;
+  background-position: left center;
+}
+
+.login:hover {
+  color: darken(#fff, 10%);
+}
+/* End header */
+
+.wrapper {
+  width: 1280px;
+  height: 1210px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.clearfix:after {
+  display: table;
+  clear: both;
+  content: "";
+}
+
+/* Start aside */
+aside {
+  float: left;
+  width: 260px;
+  height: 100%;
+  background-color: #2a2e3d;
+}
+
+.user {
+  height: 92px;
+  line-height: 92px;
+  text-align: center;
+}
+
+.user-name {
+  font-size: 1.6em;
+  color: #fff;
+}
+
+.statistics {
+  margin-bottom: 19px;
+  padding-right: 50px;
+  padding-left: 50px;
+}
+
+.col-6 {
+  float: left;
+  width: 50%;
+}
+
+.statistics .col-6 {
+  font-family: 'SimSun';
+  text-align: center;
+  color: #6e8095;
+}
+
+.statistics .col-6:nth-child(1) {
+  border-right: 1px solid darken(#6e8095, 25%);
+}
+
+.num {
+  font-family: 'SimHei';
+  font-size: 1.6em;
+}
+
+//* Start nav *//
+.nav a {
+  display: block;
+  font-family: 'SimHei';
+  color: #6e8095;
+}
+
+.nav a:hover,
+.nav a:focus {
+  color: #fff;
+  background-color: #383d4e;
+}
+
+.level1>li>a {
+  padding-left: 50px;
+  line-height: 48px;
+}
+
+.level1>li:hover .level2,
+.level1>li:focus .level2 {
+  display: block;
+}
+
+.level2 {
+  display: none;
+}
+
+.level2>li>a {
+  padding-left: 83px;
+  line-height: 38px;
+  background-image: url('../../img/task_1_9_1_03.png');
+  background-repeat: no-repeat;
+  background-position: 67px center;
+}
+
+.level2>li>a:hover,
+.level2>li>a:focus {
+
+}
+
+.level2>li:hover .level3,
+.level2>li:focus .level3 {
+  display: block;
+}
+
+.level3 {
+  display: none;
+}
+
+.level3>li>a {
+  padding-left: 100px;
+  line-height: 38px;
+}
+//* End nav *//
+/* End aside */
+
+/* Start main */
+main {
+  position: relative;
+  float: left;
+  width: 1020px;
+  padding-top: 50px;
+  padding-right: 60px;
+  padding-left: 60px;
+  background-color: #eee;
+}
+
+.main-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  margin-bottom: 20px;
+  padding-left: 30px;
+  font-family: 'SimHei';
+  line-height: 30px;
+  color: #aaa;
+  background-color: #fff;
+}
+
+.search {
+  margin-bottom: 10px;
+  font-family: 'SimHei';
+  color: #aaa;
+  background-color: #fff;
+}
+
+.search-block {
+  float: left;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  margin-left: 30px;
+}
+
+.search-block-row {
+  margin-bottom: 6px;
+}
+
+.search-select {
+  /* reset default style first */
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+
+  margin-left: 10px;
+  padding: 3px 18px 3px 8px;
+  background-image: url('../../img/task_1_9_1_02.png');
+  background-repeat: no-repeat;
+  background-position: right center;
+}
+
+.search-box-large {
+  width: 120px;
+}
+
+.search-box-small {
+  width: 70px;
+}
+/* End main */
