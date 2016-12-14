@@ -1,0 +1,27 @@
+body {
+  font-family: 'Microsoft YaHei';
+  font-size: 62.5%;
+}
+
+#queue {
+  display: flex;
+  align-items: flex-end;
+  height: 200px;
+}
+
+.queue-item {
+  width: 10px;
+  margin-left: 1px;
+  list-style: none;
+  background-color: #ee0000;
+  animation: fadein .5s ease-in-out;
+}
+
+@keyframes fadein {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.queue-item:hover {
+  background-color: #ff0000;
+}
