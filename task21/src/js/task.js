@@ -1,31 +1,32 @@
 (function() {
   var tagInput = document.getElementById( 'tag-input' ),
       tagQueueEle = document.getElementById( 'tag-queue' ),
-      interestInput = document.getElementById( 'interest-input' ),
-      interestButton = document.getElementById( 'interest-button'),
-      interestQueueEle = document.getElementById( 'interest-queue' ),
-      tagQueue, interestQueue;
+      hobbyInput = document.getElementById( 'hobby-input' ),
+      hobbyButton = document.getElementById( 'hobby-button'),
+      hobbyQueueEle = document.getElementById( 'hobby-queue' ),
+      tagQueue, hobbyQueue;
 
   tagQueue = {
-    items: [],
-    rootEle: tagQueueEle,
+    init: function ( rootEle, input ) {
+      this.items = [];
+      this.rootEle = rootEle;
+      this.input = input;
 
-    getItems: function ( str ) {
-      var pattern = new RegExp( '[\\s,，、]+', 'g' );
-      return str.trim().split( pattern );
+      // 绑定事件
+      this.input.addEventListener( 'keydown', this.handlerInput.bind( this ));
+      this.rootEle.addEventListener( 'click', this.handlerClick.bind( this ) );
     },
 
     insertItem: function ( value ) {
-      var inputs = this.getItems( value );
-      
-      inputs.map( function ( item, index ) {
-        if ( item !== '' && this.items.indexOf( item ) === -1 ) {
-          this.items.push( item );
-        }
-        if ( this.items.length > 10 ) {
-          this.items.shift();
-        }
-      }.bind( this ));
+      var item = value.trim();
+      if ( item !== '' && this.items.indexOf( item ) === -1 ) {
+        this.items.push( item );
+      } else {
+        return;
+      }
+      if ( this.items.length > 10 ) {
+        this.items.shift();
+      }
       this.refresh();
     },
 
@@ -46,33 +47,50 @@
       });
 
       this.rootEle.innerHTML = itemEles.join( '' );
+    },
+
+    handlerInput: function ( e ) {
+      var value = e.target.value;
+      if ( e.keyCode === 32 || e.keyCode === 188 || e.keyCode === 13 ) {
+        this.insertItem( value );
+        e.target.value = '';
+        e.preventDefault();
+      }
+    },
+
+    handlerClick: function ( e ) {
+      if ( e.target.className === 'queue-item' ) {
+        this.deleteItem( e.target );
+      }
     }
 
   };
+  tagQueue.init( tagQueueEle, tagInput );
 
-  tagInput.addEventListener( 'keydown', function ( e ) {
-    var value = e.target.value;
-    if ( e.keyCode === 32 || e.keyCode === 188 || e.keyCode === 13 ) {
-      tagQueue.insertItem( value );
-      e.target.value = '';
-      e.preventDefault();
-    }
-  });
+  // hobby队列的功能都委托给tagQueue
+  // 添加自己的init和handlerInput逻辑
+  hobbyQueue = Object.create( tagQueue );
+  hobbyQueue.init = function ( rootEle, input, inputButton ) {
+    this.items = [];
+    this.rootEle = rootEle;
+    this.input = input;
+    this.inputButton = inputButton;
 
-  // 单击删除事件
-  tagQueueEle.addEventListener( 'click', function ( e ) {
-    if ( e.target.className === 'queue-item' ) {
-      tagQueue.deleteItem( e.target );
-    }
-  });
+    this.inputButton.addEventListener( 'click', this.handlerInput.bind( this ));
+  };
+  hobbyQueue.getItems = function ( str ) {
+    var pattern = new RegExp( '[\\s,，、]+', 'g' );
+    return str.trim().split( pattern );
+  };
 
-  // interest队列的功能都委托给tagQueue
-  interestQueue = Object.create( tagQueue );
-  interestQueue.items = [];
-  interestQueue.rootEle = interestQueueEle;
-  interestButton.addEventListener( 'click', function ( e ) {
-    var value = interestInput.value;
-    interestQueue.insertItem( value );
-  });
+  hobbyQueue.handlerInput = function ( e ) {
+    var value = this.input.value,
+        items = this.getItems( value );
+
+    items.map( function ( item, index ) {
+      this.insertItem( item );
+    }.bind( this ));
+  };
+  hobbyQueue.init( hobbyQueueEle, hobbyInput, hobbyButton );
 
 }());
