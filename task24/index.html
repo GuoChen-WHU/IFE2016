@@ -1,0 +1,64 @@
+<!DOCTYPE>
+<html lang="zh-cmn-Hans">
+<head>
+  <meta charset="utf-8">
+  <title>Task 24</title>
+  <link rel="stylesheet" href="build/css/compiled.css">
+</head>
+<body>
+  <main>
+    <div class="tree">
+      <div class="node">
+        Super
+        <div class="node">
+          Cat
+          <div class="node">
+            Apple
+            <div class="node">Pig</div>
+            <div class="node">Soccer</div>
+            <div class="node">Bag</div>
+          </div>
+          <div class="node">
+            Schoole
+            <div class="node">Book</div>
+            <div class="node">Man</div>
+          </div>
+        </div>
+        <div class="node">
+          Glass
+          <div class="node">
+            Fish
+            <div class="node">Color</div>
+            <div class="node">Pen</div>
+            <div class="node">Code</div>
+            <div class="node">Human</div>
+          </div>
+        </div>
+        <div class="node">
+          Pear
+          <div class="node">Pig</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="control-row">
+      <button id="bft-button">广度优先遍历</button>
+      <button id="dft-button">深度优先遍历</button>
+    </div>
+
+    <div class="control-row">
+      <input id="search-input" type="text">
+      <button id="bfs-button">广度优先搜索</button>
+      <button id="dfs-button">深度优先搜索</button>
+    </div>
+
+    <div class="control-row">
+      <button id="delete-button">删除</button>
+      <input id="insert-input" type="text">
+      <button id="insert-button">插入</button>
+    </div>
+  </main>
+
+  <script src="src/js/task.js"></script>
+</body>
+</html>
