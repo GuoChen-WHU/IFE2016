@@ -5,7 +5,8 @@
       postorderButton = document.getElementById( 'postorder-button'),
       rootEle = document.getElementsByClassName( 'tree')[ 0 ],
       result = [],
-      timer = null;
+      timer = null,
+      currentIndex;
 
   function inOrder( node, process ) {
     if ( node ) {
@@ -54,23 +55,27 @@
   }
 
   function displayResult() {
-    var i = 0;
+    currentIndex = 0;
 
-    addClass( result[ i ], 'current' );
+    addClass( result[ currentIndex ], 'current' );
     timer = setInterval( function () {
-      i++;
-      if ( i < result.length ) {
-        addClass( result[ i ], 'current' );
-        removeClass( result[ i - 1 ], 'current' );
+      currentIndex++;
+      if ( currentIndex < result.length ) {
+        addClass( result[ currentIndex ], 'current' );
+        removeClass( result[ currentIndex - 1 ], 'current' );
       } else {
         clearInterval( timer );
-        removeClass( result[ i - 1 ], 'current' );
+        removeClass( result[ currentIndex - 1 ], 'current' );
       }
     }, 1000);
   }
 
   function reset() {
     clearInterval( timer );
+    if ( currentIndex ) {
+      removeClass( result[ currentIndex ], 'current' );
+      currentIndex = undefined;
+    }
     result = [];
   }
 
