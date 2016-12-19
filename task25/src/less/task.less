@@ -1,0 +1,45 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+main {
+  text-align: center;
+}
+
+.tree {
+  display: inline-block;
+  margin: 30px auto;
+  text-align: left;
+}
+
+.node {
+  padding: 15px;
+  border: 1px solid transparent;
+}
+
+.node:before {
+  content: "▾";
+  transform: rotate( -90deg );
+}
+
+.node:before:hover {
+  background-color: #000;
+}
+
+.current {
+  background-color: #f00;
+}
+
+.match {
+  background-color: #0f0;
+}
+
+.select {
+  border: 1px solid #00f;
+}
+
+.control-row {
+  margin-bottom: 10px;
+}
