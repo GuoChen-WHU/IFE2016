@@ -4,9 +4,48 @@ var result, // 存储遍历结果
     currentIndex, // 当前节点在result中的索引
     target, // 搜索目标字符串
     targetIndexes, // 匹配节点在result中的索引
-    selected; // 选中的节点
+    selected, // 选中的节点
+    data = {
+      '英超': {
+        '切尔西': {
+          '阿扎尔': {},
+          '科斯塔': {},
+          '威廉': {}
+        },
+        '阿森纳': {
+          '桑切斯': {}
+        },
+        '曼联': {
+          '伊布': {}
+        }
+      }
+    },
+    root;
+
+function Node( value ) {
+  this.value = value;
+  this.children = [];
+}
 
 
+/**
+ * 根据JSON数据构造树结构
+ */
+function build() {
+  var key;
+  root = new Node( 'root' );
+  for ( key in data ) {
+    root.value = key;
+    root.children = Object.keys( data[ key ]);
+  }
+}
+
+
+/**
+ * 渲染数据
+ */
+function render() {
+}
 
 /**
  * 广度优先遍历
