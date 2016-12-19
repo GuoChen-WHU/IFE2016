@@ -1,170 +1,46 @@
-
-var result, // 存储遍历结果
-    timer, // 动画效果计时器
-    currentIndex, // 当前节点在result中的索引
-    target, // 搜索目标字符串
-    targetIndexes, // 匹配节点在result中的索引
-    selected, // 选中的节点
-    data = {
-      '英超': {
-        '切尔西': {
-          '阿扎尔': {},
-          '科斯塔': {},
-          '威廉': {}
-        },
-        '阿森纳': {
-          '桑切斯': {}
-        },
-        '曼联': {
-          '伊布': {}
-        }
-      }
-    },
-    root;
-
-function Node( value ) {
-  this.value = value;
-  this.children = [];
-}
-
-
-/**
- * 根据JSON数据构造树结构
- */
-function build() {
-  var key;
-  root = new Node( 'root' );
-  for ( key in data ) {
-    root.value = key;
-    root.children = Object.keys( data[ key ]);
-  }
-}
-
-
-/**
- * 渲染数据
- */
-function render() {
-}
-
-/**
- * 广度优先遍历
- */
-function bft( node, process ) {
-  var queue = [],
-      current,
-      child;
-
-  if ( node ) {
-    queue.push( node );
-
-    while ( queue.length !== 0 ) {
-      current = queue.shift();
-      child = current.firstElementChild;
-      while ( child !== null ) {
-        queue.push( child );
-        child = child.nextElementSibling;
-      }
-      process( current );
-    }
-  }
-}
-
-/**
- * 深度优先遍历
- */
-function dft( node, process ) {
-  var stack = [],
-      current,
-      child;
-
-  if ( node ) {
-    stack.push( node );
-
-    while ( stack.length !== 0 ) {
-      current = stack.pop();
-
-      // child入栈“从后往前”，这样遍历的顺序才是“从前往后”
-      child = current.lastElementChild;
-      while ( child !== null ) {
-        stack.push( child );
-        child = child.previousElementSibling;
-      }
-      process( current );
-    }
-  }
-}
-
-/* 
- * 遍历时用的处理函数，简单地将节点加到result数组中
- */
-function traverse( node ) {
-  result.push( node );
-}
-
 /*
- * 搜索时用的处理函数，把节点加到result中，如果当前节点
- * 是目标节点，把它在result中的索引记录下。
- */
-function search( node ) {
-  result.push( node );
-  if ( node.firstChild.nodeValue.trim() === target ) {
-    targetIndexes.push( result.length - 1 );
-  }
-}
+ * tree.js
+ * tree-view component module for ife2016 task25
+*/
 
-/*
- * 动画显示结果
- */
-function displayResult() {
-  currentIndex = 0;
-  addClass( result[ currentIndex ], 'current' );
-
-  // 启动定时器，“current节点”每秒往前挪一次
-  timer = setInterval( function () {
-    currentIndex++;
-
-    // 遍历过程中，调整“current节点”；如果遇到要搜索的节点，
-    // 也把它标识出来
-    if ( currentIndex < result.length ) {
-      addClass( result[ currentIndex ], 'current' );
-      removeClass( result[ currentIndex - 1 ], 'current' );
-      if ( targetIndexes.indexOf( currentIndex ) !== -1 ) {
-        addClass( result[ currentIndex ], 'match');
-      }
-    }
-
-    // 遍历结束，清除定时器和current节点；如果有搜索目标且没有
-    // 搜索到，弹出提示
-    else {
-      clearInterval( timer );
-      removeClass( result[ currentIndex - 1 ], 'current' );
-      currentIndex = undefined;
-      if ( target !== '' && targetIndexes.length === 0 ) {
-        alert( '没有找到指定节点！' );
-      }
-    }
-  }, 500);
-}
-
-/*
- * 重置状态函数，包括清除定时器、还原节点样式、重置currentIndex、
- * targetIndexes、result、target等状态变量的值
- */
-function reset() {
-  clearInterval( timer );
-  if ( currentIndex ) {
-    removeClass( result[ currentIndex ], 'current' );
-    currentIndex = undefined;
-  }
-  targetIndexes.forEach( function ( targetIndex ) {
-    removeClass( result[ targetIndex ], 'match' );
-  });
-  targetIndexes = [];
-  result = [];
-  target = '';
-}
-
+//---------------- BEGIN MODULE SCOPE VARIABLES --------------
+var
+  // 组件配置属性
+  configMap = {
+    mainHTML: 
+      '<div class="tree" tree-node-id="0"></div>' +
+      '<div class="control">' +
+        '<section>' +
+          '<input id="insert-input" type="text">' +
+          '<button id="insert-button">插入</button>' +
+        '</section>' +
+        '<section>' +
+          '<button id="delete-button">删除</button>' +
+        '</section>' +
+        '<section>' +
+          '<input id="search-input" type="text">' +
+          '<button id="bfs-button">广度优先搜索</button>' +
+          '<button id="dfs-button">深度优先搜索</button>' +
+        '</section>' +
+      '</div>'
+  },
+  // 状态变量
+  stateMap = {
+    tranResult: [],
+    searchResult: [],
+    timer: null,
+    currentId: undefined,
+    target: '',
+    selected: null,
+    rootNode: null,
+    guid: 0,
+    data: null
+  },
+  // DOM缓存
+  DOMMap = {};
+//----------------- END MODULE SCOPE VARIABLES ---------------
+     
+//------------------- BEGIN UTILITY METHODS ------------------ 
 /* 
  * 节点添加Class
  */
@@ -193,93 +69,360 @@ function removeClass( ele, className ) {
   }
 }
 
-/*
- * 初始化函数，绑定按钮上的事件
+/**
+ * 广度优先遍历
  */
-function init() {
-  var bftButton = document.getElementById( 'bft-button'),
-      dftButton = document.getElementById( 'dft-button' ),
-      searchInput = document.getElementById( 'search-input' ),
-      bfsButton = document.getElementById( 'bfs-button' ),
-      dfsButton = document.getElementById( 'dfs-button' ),
-      rootEle = document.getElementsByClassName( 'tree')[ 0 ],
-      deleteButton = document.getElementById( 'delete-button' ),
-      insertInput = document.getElementById( 'insert-input' ),
-      insertButton = document.getElementById( 'insert-button' );
+function bft( node, process ) {
+  var queue = [],
+      current,
+      i,
+      len;
 
-  // 初始化模块内的全局变量
-  result = [];
-  timer = null;
-  target = '';
-  targetIndexes = [];
+  if ( node ) {
+    queue.push( node );
 
-  bftButton.addEventListener( 'click', function () {
-    reset();
-    bft( rootEle.firstElementChild, traverse );
-    displayResult();
-  });
-
-  dftButton.addEventListener( 'click', function () {
-    reset();
-    dft( rootEle.firstElementChild, traverse );
-    displayResult();
-  });
-
-  bfsButton.addEventListener( 'click', function () {
-    reset();
-    target = searchInput.value.trim();
-    bft( rootEle.firstElementChild, search );
-    displayResult();
-  });
-  
-  dfsButton.addEventListener( 'click', function () {
-    reset();
-    target = searchInput.value.trim();
-    dft( rootEle.firstElementChild, search );
-    displayResult();
-  });
-
-  // node上的选中事件委托到tree节点上处理
-  rootEle.addEventListener( 'click', function ( e ) {
-    if ( e.target.className.indexOf( 'node' ) === 0 ) {
-      // 先把之前的选择去掉
-      if ( selected ) {
-        removeClass( selected, 'select' );
+    while ( queue.length !== 0 ) {
+      current = queue.shift();
+      len = current.children.length;
+      for ( i = 0; i < len; i++ ) {
+        queue.push( current.children[ i ]);
       }
-      // 如果选的是同一个元素，取消选择；否则切换选择
-      if ( selected === e.target ) {
-        selected = undefined;
-      } else {
-        addClass( e.target, 'select' );
-        selected = e.target;
-      }
+      process( current );
     }
-  });
-
-  deleteButton.addEventListener( 'click', function () {
-    if ( !selected ) {
-      alert( '请单击选择要删除的节点！' );
-    } else {
-      selected.parentNode.removeChild( selected );
-      selected = undefined;
-    }
-  });
-
-  insertButton.addEventListener( 'click', function() {
-    var node,
-        value = insertInput.value.trim();
-
-    if ( !selected ) {
-      alert( '请单击选择要插入子节点的节点！' );
-    } else if ( value === '' ) {
-      alert( '请输入要插入的节点内容！' );
-    } else {
-      node = document.createElement( 'div' );
-      node.className = 'node';
-      node.innerText = value;
-      selected.appendChild( node );
-    }
-  });
+  }
 }
 
-export { init };
+/**
+ * 深度优先遍历
+ */
+function dft( node, process ) {
+  var stack = [],
+      current,
+      i,
+      len;
+
+  if ( node ) {
+    stack.push( node );
+
+    while ( stack.length !== 0 ) {
+      current = stack.pop();
+
+      // child入栈“从后往前”，这样遍历的顺序才是“从前往后”
+      len = current.children.length;
+      for ( i = len - 1; i >= 0; i-- ) {
+        stack.push( current.children[ i ]);
+      }
+      process( current );
+    }
+  }
+}
+//-------------------- END UTILITY METHODS -------------------
+
+//--------------------- BEGIN MODEL METHODS ------------------
+/**
+ * 节点类构造函数
+ */
+function Node( value, parent ) {
+  this.id = getId();
+  this.value = value;
+  this.children = [];
+  this.parent = parent;
+}
+
+/**
+ * 构造节点时，获取guid
+ */
+function getId() {
+  return stateMap.guid++;
+}
+
+Node.prototype.insertChild = function ( value ) {
+  var newNode = new Node( value, this );
+  this.children.push( newNode );
+  return newNode;
+};
+
+Node.prototype.deleteChild = function ( child ) {
+  var index = this.children.indexOf( child );
+  this.children.splice( index, 1 );
+};
+
+Node.prototype.destroy = function () {
+  this.parent.deleteChild( this );
+  this.id = null;
+  this.value = null;
+  this.children = null;
+  this.parent = null;
+};
+
+/**
+ * 根据JSON数据构造树结构
+ */
+function initTree() {
+  var key,
+      child;
+
+  stateMap.rootNode = new Node( 'root', null );
+  buildAt( stateMap.rootNode, stateMap.data );
+
+  /*
+   * 递归辅助函数
+   */
+  function buildAt ( node, data ) {
+    var key,
+        child;
+
+    for ( key in data ) {
+      if ( data.hasOwnProperty( key )) {
+        child = node.insertChild( key );
+        buildAt( child, data[ key ]);
+      }
+    }
+  }
+}
+
+/** 
+ * 遍历时用的处理函数，简单地将节点id加到tranResult数组中
+ */
+function traverse( node ) {
+  stateMap.tranResult.push( node.id );
+}
+
+/**
+ * 搜索时用的处理函数，把节点id加到tranResult中，如果当前节点
+ * 是目标节点，把它的id记录在searchResult中。
+ */
+function search( node ) {
+  stateMap.tranResult.push( node.id );
+  if ( node.value === stateMap.target ) {
+    stateMap.searchResult.push( node.id );
+  }
+}
+
+/** 
+ * 插入时用的处理函数，遇到目标节点时插入子节点
+ */
+function insert( value, node ) {
+  if ( parseInt( getNodeId( stateMap.selected )) === node.id ) {
+    node.insertChild( value );
+    // 每次都完全重绘，select、match等样式会没掉，效率也低，需要修改
+    renderTree();
+  }
+}
+
+/** 
+ * 删除时用的处理函数，检查子节点中有没有目标节点，有就删掉
+ */
+function destroy( node ) {
+  var selectedId = parseInt( getNodeId( stateMap.selected ));
+  if ( selectedId === node.id ) {
+    node.destroy();
+    // 每次都完全重绘，select、match等样式会没掉，效率也低，需要修改
+    renderTree();
+  }
+}
+
+/**
+ * 重置状态函数，包括清除定时器、还原节点样式、重置currentId、
+ * searchResult、tranResult、target等状态变量的值
+ */
+function reset() {
+  clearInterval( stateMap.timer );
+  if ( stateMap.currentId ) {
+    removeClass( getNodeEle( stateMap.currentId ), 'current' );
+    stateMap.currentId = undefined;
+  }
+  stateMap.searchResult.forEach( function ( id ) {
+    removeClass( getNodeEle( id ), 'match' );
+  });
+  stateMap.searchResult = [];
+  stateMap.tranResult = [];
+  stateMap.target = '';
+}
+//-------------------- END MODEL HANDLERS --------------------
+
+//--------------------- BEGIN DOM METHODS --------------------
+/*
+ * 缓存DOM元素
+ */
+function setDOMMap () {
+  DOMMap = {
+    treeRoot: document.getElementsByClassName( 'tree' )[ 0 ],
+    insertInput: document.getElementById( 'insert-input' ),
+    insertButton: document.getElementById( 'insert-button' ),
+    deleteButton: document.getElementById( 'delete-button' ),
+    searchInput: document.getElementById( 'search-input' ),
+    bfsButton: document.getElementById( 'bfs-button' ),
+    dfsButton: document.getElementById( 'dfs-button' )
+  };
+}
+
+/**
+ * 渲染数据
+ */
+function renderTree() {
+  DOMMap.treeRoot.innerHTML = getChildEleStr( stateMap.rootNode );
+
+  /**
+   * 渲染数据辅助递归函数
+   */
+  function getChildEleStr( node ) {
+    var str = '';
+    node.children.forEach( function ( child, index ) {
+      str +=
+        '<div class="node" tree-node-id="' + child.id + '">' +
+        '<span class="arrow">▾</span>' + 
+        '<span class="node-value">' + child.value + '</span>' +
+        getChildEleStr( child ) +
+        '</div>';
+    });
+    return str;
+  }
+}
+
+/*
+ * 动画显示结果
+ */
+function displayResult() {
+  stateMap.currentId = stateMap.tranResult.shift();
+  addClass( getNodeEle( stateMap.currentId ), 'current' );
+
+  // 启动定时器，“current节点”每秒往前挪一次
+  stateMap.timer = setInterval( function () {
+    var lastNode = getNodeEle( stateMap.currentId );
+    stateMap.currentId = stateMap.tranResult.shift();
+    var currentNode = getNodeEle( stateMap.currentId );
+
+    // 遍历过程中，调整“current节点”；如果遇到要搜索的节点，
+    // 也把它标识出来
+    if ( stateMap.currentId !== undefined ) {
+      addClass( currentNode, 'current' );
+      removeClass( lastNode, 'current' );
+      if ( stateMap.searchResult.indexOf( stateMap.currentId ) !== -1 ) {
+        addClass( currentNode, 'match');
+      }
+    }
+
+    // 遍历结束，清除定时器和current节点；如果有搜索目标且没有
+    // 搜索到，弹出提示
+    else {
+      clearInterval( stateMap.timer );
+      removeClass( lastNode, 'current' );
+      if ( stateMap.target !== '' && stateMap.searchResult.length === 0 ) {
+        alert( '没有找到指定节点！' );
+      }
+    }
+  }, 500);
+}
+
+/**
+ * 根据节点id获取对应DOM节点
+ */
+function getNodeEle ( id ) {
+  return document.querySelector( '[tree-node-id="' + id + '"]');
+}
+
+/**
+ * 根据DOM节点获取对应树节点id
+ */
+function getNodeId ( ele ) {
+  return ele.getAttribute( 'tree-node-id' );
+}
+//---------------------- END DOM METHODS ---------------------
+
+//------------------- BEGIN EVENT HANDLERS -------------------
+/**
+ * 处理点击事件
+ */
+function handlerClick ( e ) {
+  if ( e.target.getAttribute( 'tree-node-id' ) !== null ) {
+    // 先把之前的选择去掉
+    if ( stateMap.selected ) {
+      removeClass( stateMap.selected, 'select' );
+    }
+    // 如果选的是同一个元素，取消选择；否则切换选择
+    if ( stateMap.selected === e.target ) {
+      stateMap.selected = undefined;
+    } else {
+      addClass( e.target, 'select' );
+      stateMap.selected = e.target;
+    }
+  }
+}
+
+/*
+ * 处理插入事件
+ */
+function handlerInsert ( e ) {
+  var node,
+      value = DOMMap.insertInput.value.trim();
+
+  if ( !stateMap.selected ) {
+    alert( '请单击选择要插入子节点的节点！' );
+  } else if ( value === '' ) {
+    alert( '请输入要插入的节点内容！' );
+  } else {
+    // 函数柯理化传入insert第一个参数
+    bft( stateMap.rootNode, insert.bind( null, value));
+  }
+}
+
+/*
+ * 处理删除事件
+ */
+function handlerDelete ( e ) {
+  if ( !stateMap.selected ) {
+    alert( '请单击选择要删除的节点！' );
+  } else {
+    bft( stateMap.rootNode, destroy );
+    stateMap.selected = null;
+  }
+}
+
+/*
+ * 处理搜索事件
+ */
+function handlerSearch ( e ) {
+  var tranFunction;
+
+  reset();
+  stateMap.target = DOMMap.searchInput.value.trim();
+
+  if ( stateMap.target === '' ) {
+    alert( '请输入要搜索的节点内容！' );
+  } else {
+    tranFunction = e.target.id === 'bfs-button' ?
+                   bft : dft;
+    tranFunction( stateMap.rootNode, search );
+    displayResult();
+  }
+}
+//-------------------- END EVENT HANDLERS --------------------
+
+//------------------- BEGIN PUBLIC METHODS -------------------
+/*
+ * 组件初始化函数
+ */
+function initComponent( container, data ) {
+
+  // 先做组件的渲染
+  container.innerHTML = configMap.mainHTML;
+
+  // 缓存DOM元素
+  setDOMMap();
+
+  // 渲染树结构
+  stateMap.data = data;
+  initTree();
+  renderTree();
+
+  // 绑定事件
+  DOMMap.treeRoot.addEventListener( 'click', handlerClick );
+  DOMMap.insertButton.addEventListener( 'click', handlerInsert );
+  DOMMap.deleteButton.addEventListener( 'click', handlerDelete );
+  DOMMap.bfsButton.addEventListener( 'click', handlerSearch );
+  DOMMap.dfsButton.addEventListener( 'click', handlerSearch );
+}
+//--------------------- END PUBLIC METHODS -------------------
+
+export { initComponent };
