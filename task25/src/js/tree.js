@@ -94,7 +94,10 @@ function bft( node, process ) {
       for ( i = 0; i < len; i++ ) {
         queue.push( current.children[ i ]);
       }
-      process( current );
+      // 回调函数可以返回false提前终止遍历
+      if ( process( current ) === false ) {
+        return;
+      }
     }
   }
 }
@@ -119,7 +122,9 @@ function dft( node, process ) {
       for ( i = len - 1; i >= 0; i-- ) {
         stack.push( current.children[ i ]);
       }
-      process( current );
+      if ( process( current ) === false ) {
+        return;
+      }
     }
   }
 }
@@ -214,6 +219,7 @@ function insert( value, node ) {
     node.insertChild( value );
     // 每次都完全重绘，select、match等样式会没掉，效率也低，需要修改
     renderTree();
+    return false;
   }
 }
 
@@ -226,6 +232,7 @@ function destroy( node ) {
     node.destroy();
     // 每次都完全重绘，select、match等样式会没掉，效率也低，需要修改
     renderTree();
+    return false;
   }
 }
 
@@ -412,7 +419,7 @@ function handlerInsert ( e ) {
   } else if ( value === '' ) {
     alert( '请输入要插入的节点内容！' );
   } else {
-    // 函数柯理化传入insert第一个参数
+    // 函数柯里化传入insert第一个参数
     bft( stateMap.rootNode, insert.bind( null, value));
   }
 }
