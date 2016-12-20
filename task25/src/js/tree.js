@@ -72,9 +72,32 @@ function removeClass( ele, className ) {
 /**
  * 节点是否含有Class
  */
- function hasClass( ele, className ) {
+function hasClass( ele, className ) {
   return ( ' ' + ele.className + ' ' ).indexOf( ' ' + className + ' ') > -1;
- }
+}
+
+/**
+ * 惰性加载的通用事件绑定函数(函数重写jshint过不了...)
+ */
+/* jshint ignore:start */
+function addEvent( ele, type, handler ) {
+  if ( window.addEventListener ) {
+    addEvent = function( ele, type, handler ) {
+      ele.addEventListener( type, handler, false );
+    };
+  } else if ( window.attachEvent ) {
+    addEvent = function( ele, type, handler ) {
+      ele.attachEvent( 'on' + type, handler );
+    };
+  } else {
+    addEvent = function( ele, type, handler ) {
+      ele[ 'on' + type ] = handler;
+    };
+  }
+
+  addEvent( ele, type, handler );
+}
+/* jshint ignore:end */
 
 /**
  * 广度优先遍历
@@ -474,11 +497,11 @@ function initComponent( container, data ) {
   renderTree();
 
   // 绑定事件
-  DOMMap.treeRoot.addEventListener( 'click', handlerClick );
-  DOMMap.insertButton.addEventListener( 'click', handlerInsert );
-  DOMMap.deleteButton.addEventListener( 'click', handlerDelete );
-  DOMMap.bfsButton.addEventListener( 'click', handlerSearch );
-  DOMMap.dfsButton.addEventListener( 'click', handlerSearch );
+  addEvent( DOMMap.treeRoot, 'click', handlerClick );
+  addEvent( DOMMap.insertButton, 'click', handlerInsert );
+  addEvent( DOMMap.deleteButton, 'click', handlerDelete );
+  addEvent( DOMMap.bfsButton, 'click', handlerSearch );
+  addEvent( DOMMap.dfsButton, 'click', handlerSearch );
 }
 //--------------------- END PUBLIC METHODS -------------------
 
