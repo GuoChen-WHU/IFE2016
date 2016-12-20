@@ -1,3 +1,10 @@
+.user-select (@string) {
+  -webkit-user-select: @string;
+  -moz-user-select: @string;
+  -ms-user-select: @string;
+  user-select: @string;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -15,9 +22,8 @@ main {
 }
 
 .node {
-  padding-right: 15px;
   padding-left: 15px;
-  border: 1px solid transparent;
+  overflow-y: hidden;
 }
 
 .current {
@@ -28,8 +34,27 @@ main {
   background-color: #0f0;
 }
 
-.select {
-  border: 1px solid #00f;
+.select > .node-value {
+  color: #00f;
+}
+
+.collapse .node {
+  height: 0;
+}
+
+.arrow {
+  display: inline-block;
+  margin-right: 5px;
+  transition: all .5s;
+  .user-select( none );
+}
+
+.arrow:hover {
+  cursor: pointer;
+}
+
+.collapse > .arrow {
+  transform: rotate( -90deg );
 }
 
 .control-row {

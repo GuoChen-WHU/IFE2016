@@ -70,6 +70,13 @@ function removeClass( ele, className ) {
 }
 
 /**
+ * 节点是否含有Class
+ */
+ function hasClass( ele, className ) {
+  return ( ' ' + ele.className + ' ' ).indexOf( ' ' + className + ' ') > -1;
+ }
+
+/**
  * 广度优先遍历
  */
 function bft( node, process ) {
@@ -280,7 +287,7 @@ function renderTree() {
   }
 }
 
-/*
+/**
  * 动画显示结果
  */
 function displayResult() {
@@ -293,11 +300,14 @@ function displayResult() {
     stateMap.currentId = stateMap.tranResult.shift();
     var currentNode = getNodeEle( stateMap.currentId );
 
-    // 遍历过程中，调整“current节点”；如果遇到要搜索的节点，
-    // 也把它标识出来
+    // 遍历过程中，调整“current节点”
     if ( stateMap.currentId !== undefined ) {
+      // 如果节点被折叠，把它显示出来
+      display( currentNode );
+      // current节点前移
       addClass( currentNode, 'current' );
       removeClass( lastNode, 'current' );
+      // 如果遇到要搜索的节点，把它标识出来
       if ( stateMap.searchResult.indexOf( stateMap.currentId ) !== -1 ) {
         addClass( currentNode, 'match');
       }
@@ -313,6 +323,43 @@ function displayResult() {
       }
     }
   }, 500);
+}
+
+/*
+ * 显示节点
+ */
+function display( nodeEle ) {
+  if ( hasClass( nodeEle.parentNode, 'collapse' )) {
+    removeClass( nodeEle.parentNode, 'collapse' );
+  }
+}
+
+/*
+ * 切换节点的折叠、展开
+ */
+function toggle( nodeEle ) {
+  if ( hasClass( nodeEle, 'collapse' )) {
+    removeClass( nodeEle, 'collapse' );
+  } else {
+    addClass( nodeEle, 'collapse' );
+  }
+}
+
+/*
+ * 选中节点
+ */
+function select( nodeEle ) {
+    // 先把之前的选择去掉
+  if ( stateMap.selected ) {
+    removeClass( stateMap.selected, 'select' );
+  }
+  // 如果选的是同一个元素，取消选择；否则切换选择
+  if ( stateMap.selected === nodeEle ) {
+    stateMap.selected = undefined;
+  } else {
+    addClass( nodeEle, 'select' );
+    stateMap.selected = nodeEle;
+  }
 }
 
 /**
@@ -335,18 +382,21 @@ function getNodeId ( ele ) {
  * 处理点击事件
  */
 function handlerClick ( e ) {
+
+  // 点击树节点或标签节点，都视为选中节点
   if ( e.target.getAttribute( 'tree-node-id' ) !== null ) {
-    // 先把之前的选择去掉
-    if ( stateMap.selected ) {
-      removeClass( stateMap.selected, 'select' );
-    }
-    // 如果选的是同一个元素，取消选择；否则切换选择
-    if ( stateMap.selected === e.target ) {
-      stateMap.selected = undefined;
-    } else {
-      addClass( e.target, 'select' );
-      stateMap.selected = e.target;
-    }
+    select( e.target );
+    return;
+  }
+  if ( e.target.className === 'node-value' ) {
+    select( e.target.parentNode );
+    return;
+  }
+
+  // 点击箭头，进行相应节点的展开、折叠
+  if ( e.target.className === 'arrow' ) {
+    toggle( e.target.parentNode );
+    return;
   }
 }
 
