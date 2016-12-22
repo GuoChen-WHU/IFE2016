@@ -1,13 +1,12 @@
-var configMap = {
-      MOVE_SPEED: '20px',
-      ENERGY_CONSUME_PER_SECOND: 5.0,
-      ENERGY_CHARGE_PER_SECOND: 2.0,
-      ANIMATION_INTERVAL: 50
-    },
-    stateMap = {
-      guid: 0,
-      usableIds: []
-    },
+import { mediator } from './mediator.js';
+
+const MOVE_SPEED = '20px',
+      ENERGY_CONSUME_PER_SECOND = 5.0,
+      ENERGY_CHARGE_PER_SECOND = 2.0,
+      ANIMATION_INTERVAL = 5000;
+
+var guid = 0,
+    usableIds = [],
     getId,
     createCraft;
 
@@ -15,7 +14,7 @@ var configMap = {
  * 给新建的飞船分配Id
  */
 getId = function () {
-  return stateMap.usableIds.shift() || stateMap.guid++;
+  return usableIds.shift() || guid++;
 };
 
 /**
@@ -25,7 +24,8 @@ createCraft = function () {
   var craft = {
     id: getId(),
     energy: 100,
-    state: 'stop'
+    state: 'stop',
+    track: this.id // 轨道简单地设成和id一样
   };
 
   /**
@@ -51,29 +51,29 @@ createCraft = function () {
    */
   craft.changeState = (function () {
     var timer,
-        refreshMove,
-        refreshStop;
+        moving,
+        stopping;
 
-    refreshMove = function () {
+    moving = function () {
       if ( this.energy <= 0 ) {
         this.energy = 0;
         this.changeState( 'stop' );
       } else {
         console.log( 'Move, energy ' + this.energy + '% left.' );
-        this.energy -= configMap.ENERGY_CONSUME_PER_SECOND *
-            configMap.ANIMATION_INTERVAL / 1000;
-        timer = setTimeout( refreshMove.bind( this ), configMap.ANIMATION_INTERVAL );
+        this.energy -= ENERGY_CONSUME_PER_SECOND *
+            ANIMATION_INTERVAL / 1000;
+        timer = setTimeout( moving.bind( this ), ANIMATION_INTERVAL );
       }
     };
 
-    refreshStop = function () {
+    stopping = function () {
       if ( this.energy >= 100 ) {
         this.energy = 100;
       } else {
-        this.energy += configMap.ENERGY_CHARGE_PER_SECOND *
-            configMap.ANIMATION_INTERVAL / 1000;
+        this.energy += ENERGY_CHARGE_PER_SECOND *
+            ANIMATION_INTERVAL / 1000;
         console.log( 'Charging, energy ' + this.energy + '% left.' );
-        timer = setTimeout( refreshStop.bind( this ), configMap.ANIMATION_INTERVAL );
+        timer = setTimeout( stopping.bind( this ), ANIMATION_INTERVAL );
       }
     };
 
@@ -81,11 +81,11 @@ createCraft = function () {
       this.state = state;
       if ( state === 'move' ) {
         clearTimeout( timer );
-        refreshMove.bind( this )();
+        moving.bind( this )();
       } else if ( state === 'stop' ) {
         clearTimeout( timer );
         console.log( 'Stop' );
-        refreshStop.bind( this )();
+        stopping.bind( this )();
       }
     };
   }());
@@ -99,11 +99,28 @@ createCraft = function () {
   };
 
   /**
-   * 信号接收处理系统提供的接收信号功能
+   * 信号接收处理系统
    */
-  craft.recieve = function () {
+  craft.reciever = function ( data ) {
+    var self = craft;
 
+    // 先判断是不是给自己的
+    if ( data.id === self.id ) {
+      switch ( data.command ) {
+        case 'move':
+          self.move();
+          break;
+        case 'stop':
+          self.stop();
+          break;
+        case 'destroy':
+          self.destroy();
+      }
+    }
   };
+
+  // 信号接收系统监听mediator中的消息
+  mediator.listen( craft.reciever );
 
   return craft;
 };

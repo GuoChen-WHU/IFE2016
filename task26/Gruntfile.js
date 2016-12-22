@@ -73,6 +73,8 @@ module.exports = function( grunt ) {
       dist: {
         files: {
           'build/js/craft.js': 'src/js/craft.js',
+          'build/js/commander.js': 'src/js/commander.js',
+          'build/js/mediator.js': 'src/js/mediator.js',
           'build/js/task.js': 'src/js/task.js'
         }
       }
@@ -81,7 +83,12 @@ module.exports = function( grunt ) {
     browserify: {
       dist: {
         files: {
-          'build/js/bundle.js': [ 'build/js/craft.js', 'build/js/task.js' ]
+          'build/js/bundle.js': [ 
+            'build/js/craft.js', 
+            'build/js/commander.js',
+            'build/js/mediator.js',
+            'build/js/task.js'
+          ]
         }
       }
     }
