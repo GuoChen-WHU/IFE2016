@@ -1,11 +1,12 @@
 import { mediator } from './mediator.js';
+import { shell, addMessage } from './shell.js';
 
-const MOVE_SPEED = '20px',
+const MOVE_SPEED = 20.0, // 单位：像素
       ENERGY_CONSUME_PER_SECOND = 5.0,
       ENERGY_CHARGE_PER_SECOND = 2.0,
-      ANIMATION_INTERVAL = 5000;
+      ANIMATION_INTERVAL = 50;
 
-var guid = 0,
+var guid = 1,
     usableIds = [],
     getId,
     createCraft;
@@ -25,8 +26,10 @@ createCraft = function () {
     id: getId(),
     energy: 100,
     state: 'stop',
-    track: this.id // 轨道简单地设成和id一样
+    timer: null
   };
+
+  craft.track = craft.id; // 轨道简单地设成和id一样
 
   /**
    * 动力系统提供的飞行功能
@@ -47,55 +50,67 @@ createCraft = function () {
   };
 
   /**
-   * 管理飞船的状态
+   * 改变飞船的状态
    */
-  craft.changeState = (function () {
-    var timer,
-        moving,
-        stopping;
-
-    moving = function () {
-      if ( this.energy <= 0 ) {
-        this.energy = 0;
-        this.changeState( 'stop' );
-      } else {
-        console.log( 'Move, energy ' + this.energy + '% left.' );
-        this.energy -= ENERGY_CONSUME_PER_SECOND *
-            ANIMATION_INTERVAL / 1000;
-        timer = setTimeout( moving.bind( this ), ANIMATION_INTERVAL );
-      }
-    };
-
-    stopping = function () {
-      if ( this.energy >= 100 ) {
-        this.energy = 100;
-      } else {
-        this.energy += ENERGY_CHARGE_PER_SECOND *
-            ANIMATION_INTERVAL / 1000;
-        console.log( 'Charging, energy ' + this.energy + '% left.' );
-        timer = setTimeout( stopping.bind( this ), ANIMATION_INTERVAL );
-      }
-    };
-
-    return function ( state ) {
+  craft.changeState = function ( state ) {
       this.state = state;
       if ( state === 'move' ) {
-        clearTimeout( timer );
-        moving.bind( this )();
+        clearTimeout( this.timer );
+        this.moving();
       } else if ( state === 'stop' ) {
-        clearTimeout( timer );
-        console.log( 'Stop' );
-        stopping.bind( this )();
+        clearTimeout( this.timer );
+        this.stopping();
       }
     };
-  }());
+
+  /**
+   * 飞行状态
+   */
+  craft.moving = function () {
+    if ( this.energy <= 0 ) {
+      this.energy = 0;
+      this.changeState( 'stop' );
+      addMessage({
+        type: 'normal',
+        content: 'The craft' + this.id + ' stopped due to lack of energy.'
+      });
+    } else {
+
+      // 让shell渲染移动效果
+      shell.move( this.id, MOVE_SPEED * ANIMATION_INTERVAL / 1000 );
+
+      this.energy -= ENERGY_CONSUME_PER_SECOND *
+          ANIMATION_INTERVAL / 1000;
+      shell.energyChange( this.id, this.energy );
+
+      this.timer = setTimeout( this.moving.bind( this ), ANIMATION_INTERVAL );
+    }
+  };
+
+  /**
+   * 停止状态
+   */
+  craft.stopping = function () {
+    this.energy += ENERGY_CHARGE_PER_SECOND *
+        ANIMATION_INTERVAL / 1000;
+
+    if ( this.energy >= 100 ) {
+      this.energy = 100;
+    } else {
+      this.timer = setTimeout( this.stopping.bind( this ), 
+        ANIMATION_INTERVAL );
+    }
+    shell.energyChange( this.id, this.energy );
+  };
 
   /**
    * 自爆系统提供的销毁功能
    */
   craft.destroy = function () {
-    console.log( 'Craft' + this.id + ' destroyed.' );
-    return usableIds.push( this.id );
+    clearTimeout( this.timer );
+    shell.destroy( this.id );
+    mediator.remove( this.reciever );
+    usableIds.push( this.id );
   };
 
   /**
@@ -105,7 +120,7 @@ createCraft = function () {
     var self = craft;
 
     // 先判断是不是给自己的
-    if ( data.id === self.id ) {
+    if ( parseInt( data.id ) === self.id ) {
       switch ( data.command ) {
         case 'move':
           self.move();
@@ -121,6 +136,9 @@ createCraft = function () {
 
   // 信号接收系统监听mediator中的消息
   mediator.listen( craft.reciever );
+
+  // 让shell进行渲染
+  shell.create( craft.id, craft.track );
 
   return craft;
 };

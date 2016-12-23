@@ -4,6 +4,7 @@
 
 import { createCraft } from './craft.js';
 import { mediator } from './mediator.js';
+import { addMessage } from './shell.js';
 
 var craftState = [], // 指挥官假设的飞船状态
     craftNum = 0, // 指挥官已知的飞船数量
@@ -18,12 +19,15 @@ var craftState = [], // 指挥官假设的飞船状态
  * 创建飞船
  */
 create = function () {
-  if ( craftNum < 5 ) {
+  if ( craftNum < 4 ) {
     var craft = createCraft();
     craftState[ craft.id ] = 'stop';
     craftNum++;
   } else {
-    throw 'Too much craft!';
+    addMessage({
+      type: 'warning',
+      content: 'The commander think there are too much crafts!'
+    });
   }
 };
 

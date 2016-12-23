@@ -1,4 +1,6 @@
-var clientList = [],
+import { addMessage } from './shell.js';
+
+var clientList = [], // 消息订阅者
     broadcast,
     notify,
     listen,
@@ -10,11 +12,20 @@ var clientList = [],
  */
 broadcast = function ( data ) {
   var success = Math.random() < 0.3 ? false : true;
+  addMessage({
+    type: 'normal',
+    content: 'The commander command craft' + data.id + ' to ' + data.command
+  });
 
   if ( success ) {
     setTimeout( function () {
       notify( data );
     }, 1000 );
+  } else {
+    addMessage({
+      type: 'warning',
+      content: 'But the command is dismissed!'
+    });
   }
 };
 

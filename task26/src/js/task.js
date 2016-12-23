@@ -1,10 +1,4 @@
-import { createCraft } from './craft.js';
+import { init } from './shell.js';
 
-var craft = createCraft();
-
-document.getElementById( 'test-move' ).addEventListener( 'click', function () {
-  craft.move();
-});
-document.getElementById( 'test-stop' ).addEventListener( 'click', function () {
-  craft.stop();
-});
+var container = document.getElementById( 'container' );
+init( container );

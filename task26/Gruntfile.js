@@ -75,6 +75,7 @@ module.exports = function( grunt ) {
           'build/js/craft.js': 'src/js/craft.js',
           'build/js/commander.js': 'src/js/commander.js',
           'build/js/mediator.js': 'src/js/mediator.js',
+          'build/js/shell.js': 'src/js/shell.js',
           'build/js/task.js': 'src/js/task.js'
         }
       }
@@ -87,6 +88,7 @@ module.exports = function( grunt ) {
             'build/js/craft.js', 
             'build/js/commander.js',
             'build/js/mediator.js',
+            'build/js/shell.js',
             'build/js/task.js'
           ]
         }
