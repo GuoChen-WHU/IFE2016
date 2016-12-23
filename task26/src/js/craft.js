@@ -1,7 +1,7 @@
 import { mediator } from './mediator.js';
 import { shell, addMessage } from './shell.js';
 
-const MOVE_SPEED = 20.0, // 单位：像素
+const MOVE_SPEED = 20.0, // 单位：角度/秒
       ENERGY_CONSUME_PER_SECOND = 5.0,
       ENERGY_CHARGE_PER_SECOND = 2.0,
       ANIMATION_INTERVAL = 50;

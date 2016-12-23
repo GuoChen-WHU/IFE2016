@@ -16,7 +16,7 @@ var mainHTML =
     DomMap,
     create, move, energyChange, destroy,
     setDomMap, addMessage,
-    pixelAdd,
+    getDegree, setDegree,
     handleClick,
     shell, init;
 
@@ -26,11 +26,11 @@ var mainHTML =
 create = function ( id, track ) {
   // 飞船本身的html
   var html = 
-    '<div class="craft" id="craft' + id + '" data-track="' + track + '">' +
-      '<div class="craft-head"></div>' +
+    '<div class="craft track' + track + '" id="craft' + id + '">' +
       '<div class="craft-body">' +
         id + '号 <span class="energy">100</span>%' +
       '</div>' +
+      '<div class="craft-head"></div>' +
     '</div>';
   DomMap.universe.innerHTML += html;
 
@@ -49,9 +49,10 @@ create = function ( id, track ) {
 /**
  * 移动飞船
  */
-move = function ( id, distance ) {
-  var craft = document.getElementById( 'craft' + id );
-  craft.style.left = pixelAdd( craft.style.left, distance );
+move = function ( id, diff ) {
+  var craft = document.getElementById( 'craft' + id ),
+      deg = getDegree( craft ) + diff;
+  setDegree( craft, deg );
 };
 
 /**
@@ -126,13 +127,18 @@ handleClick = function ( e ) {
 };
 
 /**
- * 像素加法
+ * 获取元素的tranform属性rotate中的角度值
  */
-pixelAdd = function ( pixel, num ) {
-  if ( pixel === '' ) { 
-    return num + 'px';
+getDegree = function ( ele ) {
+  if ( ele.style.transform === '' ) {
+    return 0;
   }
-  return parseInt( pixel.slice( 0, -2 )) + num + 'px';
+  var pattern = /\((\d+)d/;
+  return parseInt( pattern.exec( ele.style.transform )[ 1 ]);
+};
+
+setDegree = function ( ele, value ) {
+  ele.style.transform = 'rotate(' + value + 'deg)';
 };
 
 shell = {
