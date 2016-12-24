@@ -1,0 +1,60 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+body {
+  padding: 20px;
+  font-size: .8em;
+}
+main {
+  float: left;
+  padding: 20px;
+  background-color: #eee;
+  border: 1px solid #999;
+}
+.twocolwrap {
+  float: left;
+  width: 100%;
+  margin-right: -120px;
+}
+.left {
+  float: left;
+  width: 200px;
+  padding: 20px;
+  background-color: white;
+  border: 1px solid #999;
+  box-sizing: border-box;
+}
+.middle {
+  width: auto;
+  padding: 20px;
+  margin-right: 140px;
+  margin-left: 220px;
+  background-color: white;
+  border: 1px solid #999;
+}
+.right {
+  float: left;
+  width: 120px;
+  padding: 20px;
+  background-color: white;
+  border: 1px solid #999;
+  box-sizing: border-box;
+}
+.logo {
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+  padding: 20px;
+  margin-bottom: 20px;
+  background-color: #eee;
+  border: 1px solid #999;
+  box-sizing: border-box;
+}
+.last {
+  margin-bottom: 0;
+}
+.team {
+  margin-left: 20px;
+  vertical-align: top;
+}

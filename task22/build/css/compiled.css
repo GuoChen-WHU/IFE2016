@@ -1,0 +1,20 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+.tree {
+  display: flex;
+}
+.node {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border: 1px solid #f00;
+}
+.node:first-child {
+  margin-right: 10px;
+}
+.current {
+  background-color: #f00;
+}

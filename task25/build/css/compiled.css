@@ -1,0 +1,47 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+main {
+  text-align: center;
+}
+.tree {
+  display: inline-block;
+  margin: 30px auto;
+  text-align: left;
+}
+.node {
+  padding-left: 15px;
+  overflow-y: hidden;
+}
+.current {
+  background-color: #f00;
+}
+.match {
+  background-color: #0f0;
+}
+.select > .node-value {
+  color: #00f;
+}
+.collapse .node {
+  height: 0;
+}
+.arrow {
+  display: inline-block;
+  margin-right: 5px;
+  transition: all .5s;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.arrow:hover {
+  cursor: pointer;
+}
+.collapse > .arrow {
+  transform: rotate(-90deg);
+}
+.control-row {
+  margin-bottom: 10px;
+}

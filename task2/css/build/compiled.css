@@ -1,0 +1,138 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+body {
+  background-color: #dedede;
+}
+header {
+  overflow: hidden;
+  height: 90px;
+  background-color: #333;
+}
+.nav {
+  display: inline-block;
+  float: right;
+}
+.nav-ul {
+  overflow: hidden;
+}
+.nav-ul-li {
+  display: inline-block;
+  float: left;
+  margin-right: 1em;
+  line-height: 90px;
+}
+.nav-ul-li a {
+  text-decoration: none;
+  color: white;
+}
+.nav-ul-li a:hover {
+  color: #999;
+}
+.nav-ul-li:before {
+  content: "● ";
+  color: black;
+}
+.article {
+  margin: 30px;
+  padding: 30px;
+  background-color: white;
+  box-shadow: 2px 2px #ababab;
+}
+.article-title {
+  margin-top: 10px;
+  margin-bottom: 20px;
+  font-size: 2em;
+}
+.article-subtitle {
+  margin-bottom: 20px;
+  color: #888;
+  font-size: 1.5em;
+}
+.article-meta {
+  margin-bottom: 20px;
+  color: #777;
+  font-size: .9em;
+}
+.article-section {
+  margin-bottom: 20px;
+}
+p {
+  line-height: 2em;
+  font-size: 1.2em;
+}
+.indent {
+  text-indent: 2em;
+}
+.nondec {
+  list-style: none;
+}
+.wrapped {
+  display: inline-block;
+  padding: 10px;
+  border: 1px solid #dedede;
+}
+.wrapped figcaption {
+  margin-bottom: 10px;
+  text-align: center;
+}
+.indentol {
+  margin-left: 2em;
+}
+.table {
+  width: 100%;
+}
+.table th {
+  color: white;
+  background-color: black;
+}
+.table-sum {
+  background-color: #ddd;
+}
+.smaller {
+  font-size: 1.6em;
+}
+.form-item {
+  margin-bottom: 10px;
+}
+.form-item-label {
+  display: inline-block;
+  width: 35%;
+  margin-right: .5%;
+  text-align: right;
+  vertical-align: top;
+}
+.form-item-note {
+  margin-top: 10px;
+  margin-bottom: 20px;
+  margin-left: 35.8%;
+  font-size: .8em;
+  color: #ababab;
+}
+.option {
+  margin-right: 5px;
+}
+.decription {
+  width: 50%;
+  height: 100px;
+}
+.form-submit {
+  width: 100%;
+  height: 40px;
+  border-radius: 10px;
+  color: white;
+  background-color: #3355d0;
+}
+.form-submit:hover {
+  background-color: #1d3380;
+}
+footer {
+  height: 90px;
+  text-align: center;
+  background-color: black;
+}
+.footer-content {
+  line-height: 90px;
+  color: white;
+}
