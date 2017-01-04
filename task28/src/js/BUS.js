@@ -1,3 +1,5 @@
+import { addMessage } from './shell.console.js';
+
 const delay = 300;
 
 var clientList = {},
@@ -14,11 +16,21 @@ broadcast = function send ( event, data ) {
   var success = Math.random() < 0.1 ? false : true;
 
   if ( success ) {
+    addMessage({
+      type: 'normal',
+      content: 'Message sent successfully.'
+    });
     setTimeout( function () {
       notify( event, data );
     }, delay );
   } else {
-    send( event, data );
+    addMessage({
+      type: 'warning',
+      content: 'Message dismissed in BUS, try again later.'
+    });
+    setTimeout( function () {
+      send( event, data );
+    }, delay );
   }
 };
 

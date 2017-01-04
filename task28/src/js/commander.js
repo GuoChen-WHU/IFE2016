@@ -4,9 +4,9 @@
 
 import { createCraft } from './craft.js';
 import { BUS } from './BUS.js';
-import { addMessage } from './shell.js';
 import { adapter } from './adapter.js';
 import { dc } from './dc.js';
+import { addMessage } from './shell.console.js';
 
 var commander,
     create,

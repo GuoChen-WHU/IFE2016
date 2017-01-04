@@ -76,6 +76,7 @@ module.exports = function( grunt ) {
           'build/js/commander.js': 'src/js/commander.js',
           'build/js/BUS.js': 'src/js/BUS.js',
           'build/js/shell.js': 'src/js/shell.js',
+          'build/js/shell.console.js': 'src/js/shell.console.js',
           'build/js/adapter.js': 'src/js/adapter.js',
           'build/js/dc.js': 'src/js/dc.js',
           'build/js/task.js': 'src/js/task.js'
@@ -86,11 +87,13 @@ module.exports = function( grunt ) {
     browserify: {
       dist: {
         files: {
-          'build/js/bundle.js': [ 
+          'build/js/bundle.js': [
+            'node_modules/jquery/dist/jquery.js',
             'build/js/craft.js', 
             'build/js/commander.js',
             'build/js/BUS.js',
             'build/js/shell.js',
+            'build/js/shell.console.js',
             'build/js/adapter.js',
             'build/js/dc.js',
             'build/js/task.js'

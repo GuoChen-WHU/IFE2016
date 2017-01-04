@@ -1,8 +1,12 @@
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.BUS = undefined;
+
+var _shellConsole = require('./shell.console.js');
+
 var delay = 300;
 
 var clientList = {},
@@ -19,11 +23,21 @@ broadcast = function send(event, data) {
   var success = Math.random() < 0.1 ? false : true;
 
   if (success) {
+    (0, _shellConsole.addMessage)({
+      type: 'normal',
+      content: 'Message sent successfully.'
+    });
     setTimeout(function () {
       notify(event, data);
     }, delay);
   } else {
-    send(event, data);
+    (0, _shellConsole.addMessage)({
+      type: 'warning',
+      content: 'Message dismissed in BUS, try again later.'
+    });
+    setTimeout(function () {
+      send(event, data);
+    }, delay);
   }
 };
 

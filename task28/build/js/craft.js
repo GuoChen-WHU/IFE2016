@@ -11,6 +11,8 @@ var _shell = require('./shell.js');
 
 var _adapter = require('./adapter.js');
 
+var _shellConsole = require('./shell.console.js');
+
 var ANIMATION_INTERVAL = 50,
     EMIT_INTERVAL = 1000,
 
@@ -77,6 +79,10 @@ exports.createCraft = createCraft = function createCraft(dynamicSys, energySys) 
         if (this.energy <= 0) {
           this.energy = 0;
           this.stop();
+          (0, _shellConsole.addMessage)({
+            type: 'warning',
+            content: 'Craft ' + this.id + ' stopped due to lack of energy.'
+          });
         } else {
           // 让shell渲染移动效果
           _shell.shell.move(this.id, this.dynamicSys.moveSpeed * ANIMATION_INTERVAL / 1000);
@@ -137,18 +143,28 @@ exports.createCraft = createCraft = function createCraft(dynamicSys, energySys) 
    */
   Craft.prototype.emit = function (data) {
     var binary = _adapter.adapter.toBinary(data);
+    (0, _shellConsole.addMessage)({
+      type: 'normal',
+      content: 'Craft ' + this.id + ' emit a message:' + binary
+    });
     _BUS.BUS.broadcast('status', binary);
   };
 
   /**
    * 信号接收处理系统
    */
-  Craft.prototype.reciever = function (binary) {
+  Craft.prototype.receiver = function (binary) {
     var self = craft,
         data = _adapter.adapter.toObj(binary);
 
     // 先判断是不是给自己的
     if (data.id === self.id) {
+
+      (0, _shellConsole.addMessage)({
+        type: 'normal',
+        content: 'Craft ' + self.id + ' receive command:' + binary
+      });
+
       switch (data.command) {
         case 'move':
           self.move();
@@ -165,7 +181,7 @@ exports.createCraft = createCraft = function createCraft(dynamicSys, energySys) 
   var craft = new Craft();
 
   // 信号接收系统监听BUS中的命令
-  _BUS.BUS.listen('command', craft.reciever);
+  _BUS.BUS.listen('command', craft.receiver);
 
   // 装配不同的动力、能源系统
   craft.dynamicSys = DYNAMICSYS[dynamicSys];

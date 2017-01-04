@@ -9,11 +9,11 @@ var _craft = require('./craft.js');
 
 var _BUS = require('./BUS.js');
 
-var _shell = require('./shell.js');
-
 var _adapter = require('./adapter.js');
 
 var _dc = require('./dc.js');
+
+var _shellConsole = require('./shell.console.js');
 
 var commander, create, move, stop, destroy, Command;
 
@@ -29,7 +29,7 @@ create = function create(dynamicSys, energySys) {
     var craft = (0, _craft.createCraft)(dynamicSys, energySys);
     _dc.dc.init(craft.id, dynamicSys, energySys);
   } else {
-    (0, _shell.addMessage)({
+    (0, _shellConsole.addMessage)({
       type: 'warning',
       content: 'There are too much crafts!'
     });
