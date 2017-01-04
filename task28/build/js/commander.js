@@ -23,7 +23,6 @@ var commander, create, move, stop, destroy, Command;
 /*
  * 指挥官模块
 */
-
 create = function create(dynamicSys, energySys) {
   if (_dc.dc.getCraftNum() < 4) {
     var craft = (0, _craft.createCraft)(dynamicSys, energySys);

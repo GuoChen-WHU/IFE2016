@@ -1,7 +1,6 @@
 /*
  * 指挥官模块
 */
-
 import { createCraft } from './craft.js';
 import { BUS } from './BUS.js';
 import { adapter } from './adapter.js';

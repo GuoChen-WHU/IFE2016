@@ -7,7 +7,10 @@ exports.BUS = undefined;
 
 var _shellConsole = require('./shell.console.js');
 
-var delay = 300;
+var delay = 300; /*
+                  * BUS模块
+                 */
+
 
 var clientList = {},
     broadcast,

@@ -1,5 +1,8 @@
+/*
+ * 数据中心模块
+*/
 import { adapter } from './adapter.js';
-import { shell } from './shell.js';
+import { monitor } from './shell.monitor.js';
 import { BUS } from './BUS.js';
 
 var dc,
@@ -21,10 +24,10 @@ handler = function ( binary ) {
   var data = adapter.toObj( binary );
 
   if ( data.status === 'destroy' ) {
-    shell.monitor.remove( data.id );
+    monitor.removeRecord( data.id );
     craftNum--;
   } else {
-    shell.monitor.update( data );
+    monitor.updateRecord( data );
   }
 };
 
@@ -49,7 +52,7 @@ dc = {
       energy: 100
     };
     craftNum++;
-    shell.monitor.add( record );
+    monitor.addRecord( record );
   }
 };
 

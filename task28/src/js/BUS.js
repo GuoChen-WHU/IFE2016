@@ -1,3 +1,6 @@
+/*
+ * BUS模块
+*/
 import { addMessage } from './shell.console.js';
 
 const delay = 300;

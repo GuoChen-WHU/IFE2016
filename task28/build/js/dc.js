@@ -7,7 +7,7 @@ exports.dc = undefined;
 
 var _adapter = require('./adapter.js');
 
-var _shell = require('./shell.js');
+var _shellMonitor = require('./shell.monitor.js');
 
 var _BUS = require('./BUS.js');
 
@@ -19,6 +19,9 @@ var dc,
 /**
  * 行星上的信号接收器
  */
+/*
+ * 数据中心模块
+*/
 receiver = function receiver(binary) {
   handler(binary);
 };
@@ -30,10 +33,10 @@ handler = function handler(binary) {
   var data = _adapter.adapter.toObj(binary);
 
   if (data.status === 'destroy') {
-    _shell.shell.monitor.remove(data.id);
+    _shellMonitor.monitor.removeRecord(data.id);
     craftNum--;
   } else {
-    _shell.shell.monitor.update(data);
+    _shellMonitor.monitor.updateRecord(data);
   }
 };
 
@@ -58,7 +61,7 @@ exports.dc = dc = {
       energy: 100
     };
     craftNum++;
-    _shell.shell.monitor.add(record);
+    _shellMonitor.monitor.addRecord(record);
   }
 };
 

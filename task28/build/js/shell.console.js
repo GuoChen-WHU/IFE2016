@@ -3,6 +3,9 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+/*
+ * shell.console子模块,负责控制台的渲染
+ */
 var mainHTML = '<ul class="console"></ul>',
     jqueryMap,
     setJqueryMap,

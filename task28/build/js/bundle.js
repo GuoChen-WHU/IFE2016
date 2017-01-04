@@ -8,7 +8,10 @@ exports.BUS = undefined;
 
 var _shellConsole = require('./shell.console.js');
 
-var delay = 300;
+var delay = 300; /*
+                  * BUS模块
+                 */
+
 
 var clientList = {},
     broadcast,
@@ -200,7 +203,6 @@ var commander, create, move, stop, destroy, Command;
 /*
  * 指挥官模块
 */
-
 create = function create(dynamicSys, energySys) {
   if (_dc.dc.getCraftNum() < 4) {
     var craft = (0, _craft.createCraft)(dynamicSys, energySys);
@@ -289,6 +291,9 @@ var _adapter = require('./adapter.js');
 
 var _shellConsole = require('./shell.console.js');
 
+/*
+ * 飞船模块
+*/
 var ANIMATION_INTERVAL = 50,
     EMIT_INTERVAL = 1000,
 
@@ -317,7 +322,8 @@ ENERGYSYS = {
   FOREVER: { chargeSpeed: 4 }
 };
 
-var guid = 1,
+var stateMap = {},
+    guid = 1,
     usableIds = [],
     getId,
     createCraft;
@@ -361,10 +367,10 @@ exports.createCraft = createCraft = function createCraft(dynamicSys, energySys) 
           });
         } else {
           // 让shell渲染移动效果
-          _shell.shell.move(this.id, this.dynamicSys.moveSpeed * ANIMATION_INTERVAL / 1000);
+          _shell.shell.moveCraft(this.id, this.dynamicSys.moveSpeed * ANIMATION_INTERVAL / 1000);
 
           this.energy -= this.dynamicSys.consumeSpeed * ANIMATION_INTERVAL / 1000;
-          _shell.shell.energyChange(this.id, this.energy);
+          _shell.shell.changeEnergy(this.id, this.energy);
 
           this.timer = setTimeout(moving.bind(this), ANIMATION_INTERVAL);
         }
@@ -388,7 +394,7 @@ exports.createCraft = createCraft = function createCraft(dynamicSys, energySys) 
         } else {
           this.timer = setTimeout(stopping.bind(this), ANIMATION_INTERVAL);
         }
-        _shell.shell.energyChange(this.id, this.energy);
+        _shell.shell.changeEnergy(this.id, this.energy);
       }.bind(this), ANIMATION_INTERVAL);
     }
   };
@@ -409,9 +415,12 @@ exports.createCraft = createCraft = function createCraft(dynamicSys, energySys) 
       energy: this.energy
     });
 
-    _shell.shell.destroy(this.id);
-    _BUS.BUS.remove('command', this.reciever);
+    _shell.shell.destroyCraft(this.id);
+    _BUS.BUS.remove('command', this.receiver);
     usableIds.push(this.id);
+
+    // 飞船对象的引用设为null
+    stateMap['craft' + this.id] = null;
   };
 
   /**
@@ -477,7 +486,10 @@ exports.createCraft = createCraft = function createCraft(dynamicSys, energySys) 
   }, EMIT_INTERVAL);
 
   // 让shell进行渲染
-  _shell.shell.create(craft.id, craft.track);
+  _shell.shell.createCraft(craft.id, craft.track);
+
+  // 模块内保存该craft的引用，销毁时用于删除
+  stateMap['craft' + craft.id] = craft;
 
   return craft;
 };
@@ -494,7 +506,7 @@ exports.dc = undefined;
 
 var _adapter = require('./adapter.js');
 
-var _shell = require('./shell.js');
+var _shellMonitor = require('./shell.monitor.js');
 
 var _BUS = require('./BUS.js');
 
@@ -506,6 +518,9 @@ var dc,
 /**
  * 行星上的信号接收器
  */
+/*
+ * 数据中心模块
+*/
 receiver = function receiver(binary) {
   handler(binary);
 };
@@ -517,10 +532,10 @@ handler = function handler(binary) {
   var data = _adapter.adapter.toObj(binary);
 
   if (data.status === 'destroy') {
-    _shell.shell.monitor.remove(data.id);
+    _shellMonitor.monitor.removeRecord(data.id);
     craftNum--;
   } else {
-    _shell.shell.monitor.update(data);
+    _shellMonitor.monitor.updateRecord(data);
   }
 };
 
@@ -545,7 +560,7 @@ exports.dc = dc = {
       energy: 100
     };
     craftNum++;
-    _shell.shell.monitor.add(record);
+    _shellMonitor.monitor.addRecord(record);
   }
 };
 
@@ -553,12 +568,15 @@ _BUS.BUS.listen('status', receiver);
 
 exports.dc = dc;
 
-},{"./BUS.js":1,"./adapter.js":2,"./shell.js":7}],6:[function(require,module,exports){
+},{"./BUS.js":1,"./adapter.js":2,"./shell.monitor.js":8}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+/*
+ * shell.console子模块,负责控制台的渲染
+ */
 var mainHTML = '<ul class="console"></ul>',
     jqueryMap,
     setJqueryMap,
@@ -604,31 +622,32 @@ exports.init = exports.shell = undefined;
 
 var _shellConsole = require('./shell.console.js');
 
+var _shellMonitor = require('./shell.monitor.js');
+
 var _commander = require('./commander.js');
 
-/*
- * shell模块,负责界面的渲染
-*/
-var mainHTML = '<div class="shell">' + '<div class="universe">' + '<div class="planet"></div>' + '</div>' + '<div class="monitor">' + '<table>' + '<tbody class="records">' + '<tr>' + '<th>飞船</th>' + '<th>动力系统</th>' + '<th>能源系统</th>' + '<th>当前飞行状态</th>' + '<th>剩余能耗</th>' + '</tr>' + '</tbody>' + '</table>' + '</div>' + '<div class="panel">' + '<section>' + '<span>动力系统选择：</span>' + '<label>' + '<input type="radio" name="dynSys" value="FORWARD">' + '前进号(速率30px/s, 能耗5%/s)' + '</label>' + '<label>' + '<input type="radio" name="dynSys" value="GALLOP">' + '奔腾号(速率50px/s, 能耗7%/s)' + '</label>' + '<label>' + '<input type="radio" name="dynSys" value="SURPASS">' + '超越号(速率80px/s, 能耗9%/s)' + '</label>' + '</section>' + '<section>' + '<span>能源系统选择：</span>' + '<label>' + '<input type="radio" name="eneSys" value="POWER">' + '劲量型(补充能源速度2%/s)' + '</label>' + '<label>' + '<input type="radio" name="eneSys" value="LIGHT">' + '光能型(补充能源速度3%/s)' + '</label>' + '<label>' + '<input type="radio" name="eneSys" value="FOREVER">' + '永久型(补充能源速度4%/s)' + '</label>' + '</section>' + '<section>' + '<button class="control-button" data-command="create">创建新飞船</button>' + '</section>' + '</div>' + '</div>',
+var mainHTML = '<div class="shell">' + '<div class="universe">' + '<div class="planet"></div>' + '</div>' + '<div class="panel">' + '<section>' + '<span>动力系统选择：</span>' + '<label>' + '<input type="radio" name="dynSys" value="FORWARD">' + '前进号(速率30px/s, 能耗5%/s)' + '</label>' + '<label>' + '<input type="radio" name="dynSys" value="GALLOP">' + '奔腾号(速率50px/s, 能耗7%/s)' + '</label>' + '<label>' + '<input type="radio" name="dynSys" value="SURPASS">' + '超越号(速率80px/s, 能耗9%/s)' + '</label>' + '</section>' + '<section>' + '<span>能源系统选择：</span>' + '<label>' + '<input type="radio" name="eneSys" value="POWER">' + '劲量型(补充能源速度2%/s)' + '</label>' + '<label>' + '<input type="radio" name="eneSys" value="LIGHT">' + '光能型(补充能源速度3%/s)' + '</label>' + '<label>' + '<input type="radio" name="eneSys" value="FOREVER">' + '永久型(补充能源速度4%/s)' + '</label>' + '</section>' + '<section>' + '<button class="control-button" data-command="create">创建新飞船</button>' + '</section>' + '</div>' + '</div>',
     jqueryMap,
     dynSysChosen,
     eneSysChosen,
-    create,
-    move,
-    energyChange,
-    destroy,
+    createCraft,
+    moveCraft,
+    changeEnergy,
+    destroyCraft,
     setJqueryMap,
     getDegree,
     setDegree,
     handleClick,
     shell,
-    init,
-    monitor;
+    init;
 
 /**
  * 创建飞船和相应的按钮
  */
-create = function create(id, track) {
+/*
+ * shell模块,负责主界面的渲染
+*/
+createCraft = function createCraft(id, track) {
 
   // 飞船本身的html
   var html = '<div class="craft track' + track + '" id="craft' + id + '">' + '<div class="craft-body">' + id + '号 <span class="energy">100</span>%' + '</div>' + '<div class="craft-head"></div>' + '</div>',
@@ -653,22 +672,44 @@ create = function create(id, track) {
 /**
  * 移动飞船
  */
-move = function move(id, diff) {
+moveCraft = function moveCraft(id, diff) {
   var deg = getDegree(jqueryMap['$craft' + id]) + diff;
   setDegree(jqueryMap['$craft' + id], deg);
 };
 
 /**
+ * 获取元素的tranform属性rotate中的角度值
+ */
+getDegree = function getDegree($ele) {
+  var ele = $ele[0],
+      pattern = /\(([\d.]+)d/;
+
+  // 第一次获取transform的时候，把transform设成rotate0
+  if (ele.style.transform === '') {
+    setDegree($ele, 0);
+    return 0;
+  }
+  return parseFloat(pattern.exec(ele.style.transform)[1]);
+};
+
+/**
+ * 设置元素的tranform属性rotate中的角度值
+ */
+setDegree = function setDegree($ele, value) {
+  $ele[0].style.transform = 'rotate(' + value + 'deg)';
+};
+
+/**
  * 改变飞船的电量显示
  */
-energyChange = function energyChange(id, energy) {
+changeEnergy = function changeEnergy(id, energy) {
   jqueryMap['$energy' + id].text(energy.toFixed(1));
 };
 
 /**
  * 删除飞船和相应按钮
  */
-destroy = function destroy(id) {
+destroyCraft = function destroyCraft(id) {
   jqueryMap['$craft' + id].remove();
   jqueryMap['$control' + id].remove();
 
@@ -685,7 +726,8 @@ exports.init = init = function init($container) {
   $container.append(mainHTML);
   setJqueryMap();
 
-  // 初始化控制台子模块
+  // 初始化子模块
+  (0, _shellMonitor.initMonitor)(jqueryMap.$shell);
   (0, _shellConsole.initConsole)(jqueryMap.$shell);
 
   // 按钮点击事件都委托给panel处理
@@ -739,68 +781,86 @@ handleClick = function handleClick(e) {
   }
 };
 
-/**
- * 获取元素的tranform属性rotate中的角度值
- */
-getDegree = function getDegree($ele) {
-  var ele = $ele[0],
-      pattern = /\(([\d.]+)d/;
-
-  // 第一次获取transform的时候，把transform设成rotate0
-  if (ele.style.transform === '') {
-    setDegree($ele, 0);
-    return 0;
-  }
-  return parseFloat(pattern.exec(ele.style.transform)[1]);
-};
-
-/**
- * 设置元素的tranform属性rotate中的角度值
- */
-setDegree = function setDegree($ele, value) {
-  $ele[0].style.transform = 'rotate(' + value + 'deg)';
-};
-
-monitor = {
-
-  add: function add(record) {
-    var recordHTML = '<tr>' + '<td>' + record.id + '号</td>' + '<td>' + record.dynamicSys + '</td>' + '<td>' + record.energySys + '</td>' + '<td class="monitor-status">' + record.status + '</td>' + '<td class="monitor-energy">' + record.energy + '%</td>' + '</tr>',
-        $record = $(recordHTML);
-
-    jqueryMap.$monitor.append($record);
-
-    // 缓存
-    jqueryMap['$record' + record.id] = $record;
-    jqueryMap['$record-status' + record.id] = $record.find('.monitor-status');
-    jqueryMap['$record-energy' + record.id] = $record.find('.monitor-energy');
-  },
-
-  update: function update(data) {
-    jqueryMap['$record-status' + data.id].text(data.status);
-    jqueryMap['$record-energy' + data.id].text(data.energy + '%');
-  },
-
-  remove: function remove(id) {
-    jqueryMap['$record' + id].remove();
-
-    delete jqueryMap['$record' + id];
-    delete jqueryMap['$record-status' + id];
-    delete jqueryMap['$record-energy' + id];
-  }
-};
-
 exports.shell = shell = {
-  create: create,
-  move: move,
-  energyChange: energyChange,
-  destroy: destroy,
-  monitor: monitor
+  createCraft: createCraft,
+  moveCraft: moveCraft,
+  changeEnergy: changeEnergy,
+  destroyCraft: destroyCraft
 };
 
 exports.shell = shell;
 exports.init = init;
 
-},{"./commander.js":3,"./shell.console.js":6}],8:[function(require,module,exports){
+},{"./commander.js":3,"./shell.console.js":6,"./shell.monitor.js":8}],8:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+/*
+ * shell.monitor子模块,负责监视屏的渲染
+*/
+var mainHTML = '<div class="monitor">' + '<table>' + '<tbody class="records">' + '<tr>' + '<th>飞船</th>' + '<th>动力系统</th>' + '<th>能源系统</th>' + '<th>当前飞行状态</th>' + '<th>剩余能耗</th>' + '</tr>' + '</tbody>' + '</table>' + '</div>',
+    jqueryMap,
+    addRecord,
+    updateRecord,
+    removeRecord,
+    setJqueryMap,
+    initMonitor,
+    monitor;
+
+addRecord = function addRecord(record) {
+  var recordHTML = '<tr>' + '<td>' + record.id + '号</td>' + '<td>' + record.dynamicSys + '</td>' + '<td>' + record.energySys + '</td>' + '<td class="record-status">' + record.status + '</td>' + '<td class="record-energy">' + record.energy + '%</td>' + '</tr>',
+      $record = $(recordHTML);
+
+  jqueryMap.$records.append($record);
+
+  // 缓存
+  jqueryMap['$record' + record.id] = $record;
+  jqueryMap['$record-status' + record.id] = $record.find('.record-status');
+  jqueryMap['$record-energy' + record.id] = $record.find('.record-energy');
+};
+
+updateRecord = function updateRecord(data) {
+  jqueryMap['$record-status' + data.id].text(data.status);
+  jqueryMap['$record-energy' + data.id].text(data.energy + '%');
+};
+
+removeRecord = function removeRecord(id) {
+  jqueryMap['$record' + id].remove();
+
+  delete jqueryMap['$record' + id];
+  delete jqueryMap['$record-status' + id];
+  delete jqueryMap['$record-energy' + id];
+};
+
+/**
+ * 缓存DOM元素
+ */
+setJqueryMap = function setJqueryMap() {
+  jqueryMap = {
+    $records: $('.records')
+  };
+};
+
+/**
+ * 初始化
+ */
+exports.initMonitor = initMonitor = function initMonitor($container) {
+  $container.append(mainHTML);
+  setJqueryMap();
+};
+
+exports.monitor = monitor = {
+  addRecord: addRecord,
+  updateRecord: updateRecord,
+  removeRecord: removeRecord
+};
+
+exports.initMonitor = initMonitor;
+exports.monitor = monitor;
+
+},{}],9:[function(require,module,exports){
 'use strict';
 
 var _shell = require('./shell.js');
@@ -808,7 +868,7 @@ var _shell = require('./shell.js');
 var $container = $('#container');
 (0, _shell.init)($container);
 
-},{"./shell.js":7}],9:[function(require,module,exports){
+},{"./shell.js":7}],10:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v3.1.1
  * https://jquery.com/
@@ -11030,4 +11090,4 @@ if ( !noGlobal ) {
 return jQuery;
 } );
 
-},{}]},{},[9,4,3,1,7,6,2,5,8]);
+},{}]},{},[10,4,3,1,7,6,8,2,5,9]);

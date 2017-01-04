@@ -1,26 +1,14 @@
 /*
- * shell模块,负责界面的渲染
+ * shell模块,负责主界面的渲染
 */
 import { initConsole, addMessage } from './shell.console.js';
+import { initMonitor } from './shell.monitor.js';
 import { commander } from './commander.js';
 
 var mainHTML = 
       '<div class="shell">' + 
         '<div class="universe">' +
           '<div class="planet"></div>' +
-        '</div>' +
-        '<div class="monitor">' +
-          '<table>' +
-            '<tbody class="records">' +
-              '<tr>' +
-                '<th>飞船</th>' +
-                '<th>动力系统</th>' +
-                '<th>能源系统</th>' +
-                '<th>当前飞行状态</th>' +
-                '<th>剩余能耗</th>' +
-              '</tr>' +
-            '</tbody>' +
-          '</table>' +
         '</div>' +
         '<div class="panel">' +
           '<section>' +
@@ -59,16 +47,16 @@ var mainHTML =
         '</div>' +
       '</div>',
     jqueryMap, dynSysChosen, eneSysChosen,
-    create, move, energyChange, destroy,
+    createCraft, moveCraft, changeEnergy, destroyCraft,
     setJqueryMap,
     getDegree, setDegree,
     handleClick,
-    shell, init, monitor;
+    shell, init;
 
 /**
  * 创建飞船和相应的按钮
  */
-create = function ( id, track ) {
+createCraft = function ( id, track ) {
 
   // 飞船本身的html
   var html = 
@@ -105,22 +93,44 @@ create = function ( id, track ) {
 /**
  * 移动飞船
  */
-move = function ( id, diff ) {
+moveCraft = function ( id, diff ) {
   var deg = getDegree( jqueryMap[ '$craft' + id ]) + diff;
   setDegree( jqueryMap[ '$craft' + id ], deg );
 };
 
 /**
+ * 获取元素的tranform属性rotate中的角度值
+ */
+getDegree = function ( $ele ) {
+  var ele = $ele[ 0 ],
+      pattern = /\(([\d.]+)d/;
+
+  // 第一次获取transform的时候，把transform设成rotate0
+  if ( ele.style.transform === '' ) {
+    setDegree( $ele, 0 );
+    return 0;
+  }
+  return parseFloat( pattern.exec( ele.style.transform )[ 1 ]);
+};
+
+/**
+ * 设置元素的tranform属性rotate中的角度值
+ */
+setDegree = function ( $ele, value ) {
+  $ele[ 0 ].style.transform = 'rotate(' + value + 'deg)';
+};
+
+/**
  * 改变飞船的电量显示
  */
-energyChange = function ( id, energy ) {
+changeEnergy = function ( id, energy ) {
   jqueryMap[ '$energy' + id ].text( energy.toFixed( 1 ));
 };
 
 /**
  * 删除飞船和相应按钮
  */
-destroy = function ( id ) {
+destroyCraft = function ( id ) {
   jqueryMap[ '$craft' + id ].remove();
   jqueryMap[ '$control' + id ].remove();
 
@@ -137,7 +147,8 @@ init = function ( $container ) {
   $container.append( mainHTML );
   setJqueryMap();
 
-  // 初始化控制台子模块
+  // 初始化子模块
+  initMonitor( jqueryMap.$shell );
   initConsole( jqueryMap.$shell );
 
   // 按钮点击事件都委托给panel处理
@@ -157,7 +168,6 @@ setJqueryMap = function () {
     $monitor: $shell.find( '.records' )
   };
 };
-
 
 /**
  * 处理按钮点击事件
@@ -190,72 +200,13 @@ handleClick = function ( e ) {
   } else if ( e.target.getAttribute( 'name' ) === 'eneSys' ) {
     eneSysChosen = e.target.value;
   }
-
-};
-
-/**
- * 获取元素的tranform属性rotate中的角度值
- */
-getDegree = function ( $ele ) {
-  var ele = $ele[ 0 ],
-      pattern = /\(([\d.]+)d/;
-
-  // 第一次获取transform的时候，把transform设成rotate0
-  if ( ele.style.transform === '' ) {
-    setDegree( $ele, 0 );
-    return 0;
-  }
-  return parseFloat( pattern.exec( ele.style.transform )[ 1 ]);
-};
-
-/**
- * 设置元素的tranform属性rotate中的角度值
- */
-setDegree = function ( $ele, value ) {
-  $ele[ 0 ].style.transform = 'rotate(' + value + 'deg)';
-};
-
-monitor = {
-
-  add: function ( record ) {
-    var recordHTML = 
-          '<tr>' +
-            '<td>' + record.id + '号</td>' +
-            '<td>' + record.dynamicSys + '</td>' +
-            '<td>' + record.energySys + '</td>' +
-            '<td class="monitor-status">' + record.status + '</td>' +
-            '<td class="monitor-energy">' + record.energy + '%</td>' +
-          '</tr>',
-        $record = $( recordHTML );
-
-    jqueryMap.$monitor.append( $record );
-
-    // 缓存
-    jqueryMap[ '$record' + record.id ] = $record;
-    jqueryMap[ '$record-status' + record.id ] = $record.find( '.monitor-status' );
-    jqueryMap[ '$record-energy' + record.id ] = $record.find( '.monitor-energy' );
-  },
-
-  update: function ( data ) {
-    jqueryMap[ '$record-status' + data.id ].text( data.status );
-    jqueryMap[ '$record-energy' + data.id ].text( data.energy + '%' );
-  },
-
-  remove: function ( id ) {
-    jqueryMap[ '$record' + id ].remove();
-
-    delete jqueryMap[ '$record' + id ];
-    delete jqueryMap[ '$record-status' + id ];
-    delete jqueryMap[ '$record-energy' + id ];
-  }
 };
 
 shell = {
-  create: create,
-  move: move,
-  energyChange: energyChange,
-  destroy: destroy,
-  monitor: monitor
+  createCraft: createCraft,
+  moveCraft: moveCraft,
+  changeEnergy: changeEnergy,
+  destroyCraft: destroyCraft,
 };
 
 export { shell, init };

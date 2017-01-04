@@ -1,3 +1,6 @@
+/*
+ * 飞船模块
+*/
 import { BUS } from './BUS.js';
 import { shell } from './shell.js';
 import { adapter } from './adapter.js';
@@ -29,7 +32,8 @@ const ANIMATION_INTERVAL = 50,
         FOREVER: { chargeSpeed: 4 }
       };
 
-var guid = 1,
+var stateMap = {},
+    guid = 1,
     usableIds = [],
     getId,
     createCraft;
@@ -46,7 +50,6 @@ getId = function () {
  */
 createCraft = function ( dynamicSys, energySys ) {
   
-
   var Craft = function () {
     this.id = getId();
     this.energy = 100;
@@ -74,11 +77,11 @@ createCraft = function ( dynamicSys, energySys ) {
           });
         } else {
           // 让shell渲染移动效果
-          shell.move( this.id, this.dynamicSys.moveSpeed * ANIMATION_INTERVAL / 1000 );
+          shell.moveCraft( this.id, this.dynamicSys.moveSpeed * ANIMATION_INTERVAL / 1000 );
 
           this.energy -= this.dynamicSys.consumeSpeed *
               ANIMATION_INTERVAL / 1000;
-          shell.energyChange( this.id, this.energy );
+          shell.changeEnergy( this.id, this.energy );
 
           this.timer = setTimeout( moving.bind( this ), ANIMATION_INTERVAL );
         }
@@ -104,7 +107,7 @@ createCraft = function ( dynamicSys, energySys ) {
           this.timer = setTimeout( stopping.bind( this ), 
             ANIMATION_INTERVAL );
         }
-        shell.energyChange( this.id, this.energy );
+        shell.changeEnergy( this.id, this.energy );
       }.bind( this ), ANIMATION_INTERVAL );
     }
   };
@@ -125,9 +128,12 @@ createCraft = function ( dynamicSys, energySys ) {
       energy: this.energy
     });
 
-    shell.destroy( this.id );
-    BUS.remove( 'command', this.reciever );
+    shell.destroyCraft( this.id );
+    BUS.remove( 'command', this.receiver );
     usableIds.push( this.id );
+
+    // 飞船对象的引用设为null
+    stateMap[ 'craft' + this.id ] = null;
   };
 
   /**
@@ -193,7 +199,10 @@ createCraft = function ( dynamicSys, energySys ) {
   }, EMIT_INTERVAL );
 
   // 让shell进行渲染
-  shell.create( craft.id, craft.track );
+  shell.createCraft( craft.id, craft.track );
+
+  // 模块内保存该craft的引用，销毁时用于删除
+  stateMap[ 'craft' + craft.id ] = craft;
 
   return craft;
 };

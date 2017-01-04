@@ -77,6 +77,7 @@ module.exports = function( grunt ) {
           'build/js/BUS.js': 'src/js/BUS.js',
           'build/js/shell.js': 'src/js/shell.js',
           'build/js/shell.console.js': 'src/js/shell.console.js',
+          'build/js/shell.monitor.js': 'src/js/shell.monitor.js',
           'build/js/adapter.js': 'src/js/adapter.js',
           'build/js/dc.js': 'src/js/dc.js',
           'build/js/task.js': 'src/js/task.js'
@@ -94,6 +95,7 @@ module.exports = function( grunt ) {
             'build/js/BUS.js',
             'build/js/shell.js',
             'build/js/shell.console.js',
+            'build/js/shell.monitor.js',
             'build/js/adapter.js',
             'build/js/dc.js',
             'build/js/task.js'
