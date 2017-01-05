@@ -1,18 +1,29 @@
-@universe-width: 600px;
-@universe-height: 600px;
-@craft-width: 110px;
-@craft-left: (@universe-width - @craft-width) / 2;
-
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+body {
+  font-size: 62.5%;
+  font-family: 'Microsoft YaHei';
+}
+
+.shell {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+/* Start universe */
 .universe {
-  position: relative;
-  width: @universe-width;
-  height: @universe-height;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   background-color: #000;
 }
 
@@ -29,19 +40,18 @@
 
 .craft {
   position: absolute;
-  left: @craft-left;
-  display: inline-block;
-  width: @craft-width;
+  left: calc(~"50% - 50px");
+  width: 100px;
   text-align: right;
   border: 1px solid #eee;
   border-radius: 15px;
   transform: rotate(0deg);
-  transform-origin: 50% @universe-height / 2;
+  transform-origin: 50% 50%;
 }
 
 .track (@num) {
-  top: 210px - 40px * (@num - 1);
-  transform-origin: 50% 90px + 40px * (@num - 1);
+  top: 30vh - 7vh * (@num - 1);
+  transform-origin: 50% 20vh + 7vh * (@num - 1);
 }
 
 .track1 {
@@ -78,16 +88,66 @@
   vertical-align: middle;
   color: #fff;
 }
+/* End universe */
 
+/* Start panel */
 .panel {
-  height: 200px;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: #fff;
+  background-color: transparent;
 }
 
+.option {
+  display: block;
+  line-height: 24px;
+  vertical-align: middle;
+}
+
+.control-button {
+  margin: 1px;
+  padding: 2px 4px;
+  color: #fff;
+  background-color: #337ab7;
+  border: 1px solid #2e6da4;
+  border-radius: 2px;
+}
+
+.control-button:hover {
+  background-color: #286090;
+  border-color: #204d74;
+}
+/* End panel */
+
+/* Start monitor */
+.monitor {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.records {
+  color: #fff;
+  font-size: 10px;
+  text-align: center;
+}
+/* End monitor */
+
+/* Start console */
 .console {
-  height: 200px;
+  position: absolute;
+  bottom: 10px;
+  padding: 0 10px;
+  height: 160px;
   overflow-y: scroll;
+}
+
+.normal {
+  color: #fff;
 }
 
 .warning {
   color: #f00;
 }
+/* End console */

@@ -12,31 +12,31 @@ var mainHTML =
         '</div>' +
         '<div class="panel">' +
           '<section>' +
-            '<span>动力系统选择：</span>' +
-            '<label>' +
+            '<p>动力系统选择：</p>' +
+            '<label class="option">' +
               '<input type="radio" name="dynSys" value="FORWARD">' +
               '前进号(速率30px/s, 能耗5%/s)' +
             '</label>' +
-            '<label>' +
+            '<label class="option">' +
               '<input type="radio" name="dynSys" value="GALLOP">' +
               '奔腾号(速率50px/s, 能耗7%/s)' +
             '</label>' +
-            '<label>' +
+            '<label class="option">' +
               '<input type="radio" name="dynSys" value="SURPASS">' +
               '超越号(速率80px/s, 能耗9%/s)' +
             '</label>' +
           '</section>' +
           '<section>' +
-            '<span>能源系统选择：</span>' +
-            '<label>' +
+            '<p>能源系统选择：</p>' +
+            '<label class="option">' +
               '<input type="radio" name="eneSys" value="POWER">' +
               '劲量型(补充能源速度2%/s)' +
             '</label>' +
-            '<label>' +
+            '<label class="option">' +
               '<input type="radio" name="eneSys" value="LIGHT">' +
               '光能型(补充能源速度3%/s)' +
             '</label>' +
-            '<label>' +
+            '<label class="option">' +
               '<input type="radio" name="eneSys" value="FOREVER">' +
               '永久型(补充能源速度4%/s)' +
             '</label>' +

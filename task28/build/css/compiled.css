@@ -3,10 +3,24 @@
   padding: 0;
   box-sizing: border-box;
 }
+body {
+  font-size: 62.5%;
+  font-family: 'Microsoft YaHei';
+}
+.shell {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+/* Start universe */
 .universe {
-  position: relative;
-  width: 600px;
-  height: 600px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   background-color: #000;
 }
 .planet {
@@ -21,34 +35,33 @@
 }
 .craft {
   position: absolute;
-  left: 245px;
-  display: inline-block;
-  width: 110px;
+  left: calc(50% - 50px);
+  width: 100px;
   text-align: right;
   border: 1px solid #eee;
   border-radius: 15px;
   transform: rotate(0deg);
-  transform-origin: 50% 300px;
+  transform-origin: 50% 50%;
 }
 .track1 {
-  top: 210px;
-  transform-origin: 50% 90px;
+  top: 30vh;
+  transform-origin: 50% 20vh;
 }
 .track2 {
-  top: 170px;
-  transform-origin: 50% 130px;
+  top: 23vh;
+  transform-origin: 50% 27vh;
 }
 .track3 {
-  top: 130px;
-  transform-origin: 50% 170px;
+  top: 16vh;
+  transform-origin: 50% 34vh;
 }
 .track4 {
-  top: 90px;
-  transform-origin: 50% 210px;
+  top: 9vh;
+  transform-origin: 50% 41vh;
 }
 .track5 {
-  top: 50px;
-  transform-origin: 50% 250px;
+  top: 2vh;
+  transform-origin: 50% 48vh;
 }
 .craft-head {
   display: inline-block;
@@ -63,13 +76,57 @@
   vertical-align: middle;
   color: #fff;
 }
+/* End universe */
+/* Start panel */
 .panel {
-  height: 200px;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: #fff;
+  background-color: transparent;
 }
+.option {
+  display: block;
+  line-height: 24px;
+  vertical-align: middle;
+}
+.control-button {
+  margin: 1px;
+  padding: 2px 4px;
+  color: #fff;
+  background-color: #337ab7;
+  border: 1px solid #2e6da4;
+  border-radius: 2px;
+}
+.control-button:hover {
+  background-color: #286090;
+  border-color: #204d74;
+}
+/* End panel */
+/* Start monitor */
+.monitor {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+.records {
+  color: #fff;
+  font-size: 10px;
+  text-align: center;
+}
+/* End monitor */
+/* Start console */
 .console {
-  height: 200px;
+  position: absolute;
+  bottom: 10px;
+  padding: 0 10px;
+  height: 160px;
   overflow-y: scroll;
+}
+.normal {
+  color: #fff;
 }
 .warning {
   color: #f00;
 }
+/* End console */
