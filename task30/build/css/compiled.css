@@ -1,0 +1,36 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-size: 62.5%;
+  font-family: 'Microsoft YaHei';
+}
+.field {
+  margin-bottom: 10px;
+}
+.rule {
+  font-size: 1em;
+  color: #aaa;
+}
+.pass {
+  font-size: 1.2em;
+  color: #0f0;
+}
+.fail,
+.empty {
+  font-size: 1.2em;
+  color: #f00;
+}
+button {
+  padding: 6px 12px;
+  color: #fff;
+  background-color: #337ab7;
+  border: 1px solid #2e6da4;
+  border-radius: 4px;
+}
+button:hover {
+  background-color: #286090;
+  border-color: #204d74;
+}
