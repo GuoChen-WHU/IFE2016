@@ -1,0 +1,23 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-size: 62.5%;
+  font-family: 'Microsoft YaHei';
+}
+form {
+  position: relative;
+}
+.hide {
+  display: none;
+}
+.show {
+  display: block;
+}
+.tab-content {
+  position: absolute;
+  left: 0;
+  top: 18px;
+}

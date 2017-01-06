@@ -1,0 +1,34 @@
+<!DOCTYPE>
+<html lang="zh-cmn-Hans">
+<head>
+  <meta charset="utf-8">
+  <title>Task 31</title>
+  <link rel="stylesheet" href="build/css/compiled.css">
+</head>
+<body>
+  <main>
+    <form>
+      <label class="tab">
+        在校生
+        <input type="radio" name="isStudent" value="true" checked>
+      </label>
+      <div class="tab-content show">
+        <label>学校</label>
+        <select class="select1">
+        </select>
+        <select class="select2">
+        </select>
+      </div>
+      <label class="tab">
+        非在校生
+        <input type="radio" name="isStudent" value="false">
+      </label>
+      <div class="tab-content hide">
+        <label>就业单位</label>
+        <input type="text" name="organization">
+      </div>
+    </form>
+  </main>
+  <script src="src/js/task.js"></script>
+</body>
+</html>
