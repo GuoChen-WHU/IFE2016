@@ -7,8 +7,21 @@ body {
   font-size: 62.5%;
   font-family: 'Microsoft YaHei';
 }
+form {
+  margin: 0 auto;
+  width: 600px;
+}
 .field {
   margin-bottom: 10px;
+}
+.field-label {
+  display: inline-block;
+  margin-right: 5px;
+  width: 38%;
+  text-align: right;
+}
+.field p {
+  margin-left: 40%;
 }
 .rule {
   font-size: 1em;
@@ -22,6 +35,9 @@ body {
 .empty {
   font-size: 1.2em;
   color: #f00;
+}
+.form-footer {
+  text-align: center;
 }
 button {
   padding: 6px 12px;

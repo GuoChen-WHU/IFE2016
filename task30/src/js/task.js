@@ -134,17 +134,18 @@
     this.ele.className = 'field';
 
     var label = document.createElement( 'label' );
-    label.innerText = this.label + ' ';
+    label.innerText = this.label;
+    label.className = 'field-label';
 
     this.input = document.createElement( 'input' );
     this.input.type = this.type;
     this.input.name = this.name;
-    label.appendChild( this.input );
-    this.ele.appendChild( label );
 
     this.note = document.createElement( 'p' );
-    this.ele.appendChild( this.note );
 
+    this.ele.appendChild( label );
+    this.ele.appendChild( this.input );
+    this.ele.appendChild( this.note );
     this.parent.appendChild( this.ele );
 
     // 绑定事件
@@ -203,9 +204,12 @@
     fields.push( field );
   });
 
-  var button = document.createElement( 'button' );
+  var footer = document.createElement( 'section' ),
+      button = document.createElement( 'button' );
+  footer.className = "form-footer";
   button.innerText = '提交';
-  form.appendChild( button );
+  footer.appendChild( button );
+  form.appendChild( footer );
 
   button.addEventListener( 'click', onClickButton );
 }());
