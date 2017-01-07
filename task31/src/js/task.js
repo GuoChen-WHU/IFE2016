@@ -83,9 +83,9 @@
   };
 
   removeClass = function( ele, className ) {
-    var pattern = new RegExp( '\\s?' + className );
-    if ( hasClass( ele, className )) {
-      ele.className = ele.className.replace( pattern, '' );
+    if ( hasClass( ele, className ) ) {
+      ele.className =
+        (' ' + ele.className + ' ').replace( ' ' + className + ' ', ' ' ).trim();
     }
   };
 
