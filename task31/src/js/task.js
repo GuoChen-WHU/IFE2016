@@ -41,7 +41,8 @@
         option1,
         option2,
         option1Ele,
-        option2Eles = {};
+        option2Eles = {},
+        isFirst = true;
 
     // select1的选项先填好
     for ( option1 in data ) {
@@ -60,6 +61,14 @@
           }
           option2Eles[ option1 ].push( option2Ele );
         });
+
+        // 第一个option1对应的option2都填好
+        if ( isFirst ) {
+          option2Eles[ option1 ].forEach( function ( optionEle ) {
+            select2.appendChild( optionEle );
+          });
+          isFirst = false;
+        }
       }
     }
 
