@@ -1,0 +1,22 @@
+* {
+  box-sizing: border-box;
+}
+.container {
+  position: relative;
+}
+.map {
+  border-collapse: collapse;
+}
+.map-cell {
+  width: 30px;
+  height: 30px;
+}
+.robot {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  margin-top: 3px;
+  margin-left: 3px;
+  background-image: url('../../img/robot.png');
+  background-size: cover;
+}
