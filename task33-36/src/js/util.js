@@ -1,6 +1,5 @@
-/**
- * 观察者模式实现
- */
+// 观察者模式实现
+//----------------
 
 /**
  * 目标类
@@ -35,7 +34,7 @@ Subject.prototype.removeObserver = function ( observer ) {
  * @param arguments
  */
 Subject.prototype.notify = function () {
-  var args = Array.prototype.slice.call( arguments );
+  var args = arguments;
   this.observers.forEach( function ( observer ) {
     observer.update.apply( observer, args );
   });

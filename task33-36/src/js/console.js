@@ -1,20 +1,15 @@
-var robot = require( './robot' ),
+var robotController = require( './robotController' ),
     commandInput = document.getElementsByClassName( 'console-input' )[ 0 ],
-    executeButton = document.getElementsByClassName( 'console-execute' )[ 0 ];
+    executeButton = document.getElementsByClassName( 'console-execute' )[ 0 ],
+    clearButton = document.getElementsByClassName( 'console-clear' )[ 0 ];
+
+commandInput.value = 'MOV RIG\nGO\nGO';
 
 executeButton.addEventListener( 'click', function () {
-  switch ( commandInput.value ) {
-    case 'GO':
-      robot.forward();
-      break;
-    case 'TUN LEF':
-      robot.turn( 'left' );
-      break;
-    case 'TUN RIG':
-      robot.turn( 'right' );
-      break;
-    case 'TUN BAC':
-      robot.turn( 'back' );
-      break;
-  }
+  var commands = commandInput.value.split( '\n' );
+  robotController.handlerExecute( commands );
+});
+
+clearButton.addEventListener( 'click', function () {
+  commandInput.value = '';
 });

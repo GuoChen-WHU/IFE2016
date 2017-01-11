@@ -1,10 +1,10 @@
-var map = require( './map' ),
+var mapModel = require( './mapModel' ),
     mapView = require( './mapView' ),
-    robot = require( './robot' ),
+    robotModel = require( './robotModel' ),
     robotView = require( './robotView' ),
     container = document.getElementsByClassName( 'container' )[ 0 ];
 
 mapView.init( container );
-map.init( 20, 20 );
+mapModel.init( 20, 20 );
 robotView.init( container );
-robot.init();
+robotModel.init();

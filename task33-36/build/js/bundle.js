@@ -1,42 +1,41 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var robot = require( './robot' ),
+var robotController = require( './robotController' ),
     commandInput = document.getElementsByClassName( 'console-input' )[ 0 ],
-    executeButton = document.getElementsByClassName( 'console-execute' )[ 0 ];
+    executeButton = document.getElementsByClassName( 'console-execute' )[ 0 ],
+    clearButton = document.getElementsByClassName( 'console-clear' )[ 0 ];
+
+commandInput.value = 'MOV RIG\nGO\nGO';
 
 executeButton.addEventListener( 'click', function () {
-  switch ( commandInput.value ) {
-    case 'GO':
-      robot.forward();
-      break;
-    case 'TUN LEF':
-      robot.turn( 'left' );
-      break;
-    case 'TUN RIG':
-      robot.turn( 'right' );
-      break;
-    case 'TUN BAC':
-      robot.turn( 'back' );
-      break;
-  }
+  var commands = commandInput.value.split( '\n' );
+  robotController.handlerExecute( commands );
 });
-},{"./robot":5}],2:[function(require,module,exports){
-var map = require( './map' ),
+
+clearButton.addEventListener( 'click', function () {
+  commandInput.value = '';
+});
+},{"./robotController":5}],2:[function(require,module,exports){
+var mapModel = require( './mapModel' ),
     mapView = require( './mapView' ),
-    robot = require( './robot' ),
+    robotModel = require( './robotModel' ),
     robotView = require( './robotView' ),
     container = document.getElementsByClassName( 'container' )[ 0 ];
 
 mapView.init( container );
-map.init( 20, 20 );
+mapModel.init( 20, 20 );
 robotView.init( container );
-robot.init();
+robotModel.init();
 
-},{"./map":3,"./mapView":4,"./robot":5,"./robotView":6}],3:[function(require,module,exports){
+},{"./mapModel":3,"./mapView":4,"./robotModel":6,"./robotView":7}],3:[function(require,module,exports){
 var util = require( './util' ),
     mapView = require( './mapView' ),
     map = {},
     init,
     isAccessible;
+
+// 绑定map模型和视图
+util.extend( new util.Subject(), map );
+map.addObserver( mapView );
 
 /**
  * 根据传入的尺寸初始化地图
@@ -47,11 +46,9 @@ var util = require( './util' ),
 init = function ( width, height ) {
   var i, j;
 
-  map = {
-    data: [],
-    width: width,
-    height: height
-  };
+  map.data = [];
+  map.width = width;
+  map.height = height;
   for ( i = 1; i < height + 1; i++ ) {
     map.data[ i ] = [];
     for ( j = 1; j < width + 1; j++ ) {
@@ -59,9 +56,6 @@ init = function ( width, height ) {
     }
   }
 
-  // 绑定map模型和视图
-  util.extend( new util.Subject(), map );
-  map.addObserver( mapView );
   map.notify( 'init', map );
 };
 
@@ -72,7 +66,10 @@ init = function ( width, height ) {
  * @param { number } y
  * @returns { boolean }
  */
-isAccessible = function ( x, y ) {
+isAccessible = function ( position ) {
+  var x = position[ 0 ],
+      y = position[ 1 ];
+      
   return x > 0 && y > 0 && map.data[ y ] !== undefined && 
     map.data[ y ][ x ] !== undefined;
 };
@@ -81,7 +78,7 @@ module.exports = {
   init: init,
   isAccessible: isAccessible
 };
-},{"./mapView":4,"./util":7}],4:[function(require,module,exports){
+},{"./mapView":4,"./util":8}],4:[function(require,module,exports){
 var util = require( './util' ),
     mapEle,
     mapView = {};
@@ -125,18 +122,15 @@ mapView.render = function ( width, height ) {
 };
 
 module.exports = mapView;
-},{"./util":7}],5:[function(require,module,exports){
-var util = require( './util' ),
-    map = require( './map' ),
-    robotView = require( './robotView' ),
-    robot = {},
-    init,
-    moveTo,
-    turnTo,
+},{"./util":8}],5:[function(require,module,exports){
+var robotModel = require( './robotModel' ),
+    mapModel = require( './mapModel' ),
+    robotController = {},
+    execute,
     forward,
     turn,
-
-    // 存储变换方向结果
+    tra,
+    turnAndMove,
     turnMap = {
       left: {
         left: 'bottom',
@@ -160,56 +154,64 @@ var util = require( './util' ),
       }
     };
 
-/**
- * 初始化
- *
- * @param { number } x
- * @param { number } y
- * @param { string } direction
- */
-init = function ( x, y, direction ) {
-  robot = {
-    position: [ 1, 1 ],
-    direction: 'top'
-  };
+robotController.handlerExecute = function ( commands ) {
+  executeOne();
 
-  util.extend( new util.Subject(), robot );
-  robot.addObserver( robotView );
-  robot.notify( robot.position, robot.direction );
-};
-
-/**
- * 移动到指定的位置,成功返回true,否则返回false
- *
- * @param { number } x
- * @param { number } y
- * @returns { boolean }
- */
-moveTo = function ( x, y ) {
-  if ( map.isAccessible( x, y ) ) {
-    robot.position = [ x, y ];
-    robot.notify( robot.position, robot.direction );
-    return true;
-  } else {
-    return false;
+  function executeOne () {
+    var command = commands.shift();
+    execute( command );
+    if ( commands.length ) {
+      setTimeout( executeOne, 1000 );
+    }
   }
 };
 
-/**
- * 转向指定的方向
- *
- * @param { string } direction
- */
-turnTo = function ( direction ) {
-  robot.direction = direction;
-  robot.notify( robot.position, robot.direction );
+execute = function ( command ) {
+  switch ( command ) {
+    case 'GO':
+      forward();
+      break;
+    case 'TUN LEF':
+      turn( 'left' );
+      break;
+    case 'TUN RIG':
+      turn( 'right' );
+      break;
+    case 'TUN BAC':
+      turn( 'back' );
+      break;
+    case 'TRA LEF':
+      tra( 'left' );
+      break;
+    case 'TRA TOP':
+      tra( 'top' );
+      break;
+    case 'TRA RIG':
+      tra( 'right' );
+      break;
+    case 'TRA BOT':
+      tra( 'bottom' );
+      break;
+    case 'MOV LEF':
+      turnAndMove( 'left' );
+      break;
+    case 'MOV TOP':
+      turnAndMove( 'top' );
+      break;
+    case 'MOV RIG':
+      turnAndMove( 'right' );
+      break;
+    case 'MOV BOT':
+      turnAndMove( 'bottom' );
+      break;
+  }
 };
 
 forward = function () {
-  var resultX = robot.position[ 0 ],
-      resultY = robot.position[ 1 ];
+  var resultX = robotModel.position[ 0 ],
+      resultY = robotModel.position[ 1 ];
 
-  switch ( robot.direction ) {
+  switch ( robotModel.direction ) {
     case 'top':
      resultY--;
      break;
@@ -223,31 +225,113 @@ forward = function () {
      resultX--;
      break;
   }
-
-  moveTo( resultX, resultY );
+  if ( mapModel.isAccessible( [ resultX, resultY ] ) ) {
+    robotModel.setPosition( [ resultX, resultY ] );
+  }
 };
 
 turn = function ( drctChange ) {
-  var direction = robot.direction;
+  var direction = robotModel.direction;
 
-  turnTo( turnMap[ direction ][ drctChange ] );
+  robotModel.setDirection( turnMap[ direction ][ drctChange ] );
 };
 
-module.exports = {
-  init: init,
-  forward: forward,
-  turn: turn
+tra = function ( dirc ) {
+  var resultX = robotModel.position[ 0 ],
+      resultY = robotModel.position[ 1 ];
+
+  switch ( dirc ) {
+    case 'left':
+      resultX--;
+      break;
+    case 'top':
+      resultY--;
+      break;
+    case 'right':
+      resultX++;
+      break;
+    case 'bottom':
+      resultY++;
+      break;
+  }
+  if ( mapModel.isAccessible( [ resultX, resultY ] ) ) {
+    robotModel.setPosition( [ resultX, resultY ] );
+  }
 };
-},{"./map":3,"./robotView":6,"./util":7}],6:[function(require,module,exports){
+
+turnAndMove = function ( dirc ) {
+  robotModel.setDirection( dirc );
+  // 两个动作分开
+  setTimeout( forward, 300 );
+};
+
+module.exports = robotController;
+},{"./mapModel":3,"./robotModel":6}],6:[function(require,module,exports){
+var util = require( './util' ),
+    robotView = require( './robotView' ),
+    robotModel = {};
+
+util.extend( new util.Subject(), robotModel );
+robotModel.addObserver( robotView );
+
+/**
+ * 初始化
+ *
+ * @param { number } x
+ * @param { number } y
+ * @param { string } direction
+ */
+robotModel.init = function ( x, y, direction ) {
+  this.position = [ 1, 1 ];
+  this.direction = 'top';
+
+  this.notify( this.position, this.direction );
+};
+
+robotModel.setPosition = function ( position ) {
+  var oldX = this.position[ 0 ],
+      oldY = this.position[ 1 ];
+
+  if ( oldX !== position[ 0 ] || oldY !== position[ 1 ] ) {
+    this.position = position;
+    this.notify( 'change:position', this.position );
+  }
+};
+
+robotModel.setDirection = function ( direction ) {
+  if ( this.direction !== direction ) {
+    this.notify( 'change:direction', this.direction, direction );
+    this.direction = direction;
+  }
+};
+
+module.exports = robotModel;
+},{"./robotView":7,"./util":8}],7:[function(require,module,exports){
 var util = require( './util' ),
     robotEle,
-    directionMap = {
-      'top': 0,
-      'right': 90,
-      'bottom': 180,
-      'left': 270
-    },
     robotView = {},
+    angleDiffMap = {
+      top: {
+        left: -90,
+        right: 90,
+        bottom: 180
+      },
+      right: {
+        top: -90,
+        bottom: 90,
+        left: 180
+      },
+      bottom: {
+        right: -90,
+        top: 180,
+        left: 90
+      },
+      left: {
+        top: 90,
+        right: 180,
+        bottom: -90
+      }
+    },
     cellSize = 30;
 
 util.extend( new util.Observer(), robotView );
@@ -258,20 +342,42 @@ robotView.init = function ( container ) {
   container.appendChild( robotEle );
 };
 
-robotView.update = function () {
-  var position = Array.prototype.shift.call( arguments ),
-      direction = Array.prototype.shift.call( arguments );
+robotView.update = function ( type ) {
+  switch ( type ) {
+    case 'change:position':
+      var position = arguments[ 1 ];
+      robotEle.style.left = ( position[ 0 ] - 1 ) * cellSize + 'px';
+      robotEle.style.top = ( position[ 1 ] - 1 ) * cellSize + 'px';
+      break;
+    case 'change:direction':
+      var diff = angleDiffMap[ arguments[ 1 ] ][ arguments[ 2 ] ],
+          oldAngle = getAngle(),
+          newAngle = oldAngle + diff;
 
-  robotEle.style.left = ( position[ 0 ] - 1 ) * cellSize + 'px';
-  robotEle.style.top = ( position[ 1 ] - 1 ) * cellSize + 'px';
-  robotEle.style.transform = 'rotate(' + directionMap[ direction ] + 'deg)';
+      setAngle( newAngle );
+
+      break;
+   }
 };
 
+function getAngle() {
+  if ( robotEle.style.transform === '' ) {
+    setAngle( 0 );
+    return 0;
+  } else {
+    var pattern = /\(([\d.]+)deg/;
+    return parseFloat( robotEle.style.transform.match( pattern )[ 1 ] );
+  }
+}
+
+function setAngle( value ) {
+  robotEle.style.transform = 'rotate(' + value + 'deg)';
+}
+
 module.exports = robotView;
-},{"./util":7}],7:[function(require,module,exports){
-/**
- * 观察者模式实现
- */
+},{"./util":8}],8:[function(require,module,exports){
+// 观察者模式实现
+//----------------
 
 /**
  * 目标类
@@ -306,7 +412,7 @@ Subject.prototype.removeObserver = function ( observer ) {
  * @param arguments
  */
 Subject.prototype.notify = function () {
-  var args = Array.prototype.slice.call( arguments );
+  var args = arguments;
   this.observers.forEach( function ( observer ) {
     observer.update.apply( observer, args );
   });
@@ -345,4 +451,4 @@ module.exports = {
   Observer: Observer,
   extend: extend
 };
-},{}]},{},[1,2,3,4,5,6,7]);
+},{}]},{},[1,2,3,4,5,6,7,8]);

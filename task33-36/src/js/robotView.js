@@ -1,12 +1,28 @@
 var util = require( './util' ),
     robotEle,
-    directionMap = {
-      'top': 0,
-      'right': 90,
-      'bottom': 180,
-      'left': 270
-    },
     robotView = {},
+    angleDiffMap = {
+      top: {
+        left: -90,
+        right: 90,
+        bottom: 180
+      },
+      right: {
+        top: -90,
+        bottom: 90,
+        left: 180
+      },
+      bottom: {
+        right: -90,
+        top: 180,
+        left: 90
+      },
+      left: {
+        top: 90,
+        right: 180,
+        bottom: -90
+      }
+    },
     cellSize = 30;
 
 util.extend( new util.Observer(), robotView );
@@ -17,13 +33,36 @@ robotView.init = function ( container ) {
   container.appendChild( robotEle );
 };
 
-robotView.update = function () {
-  var position = Array.prototype.shift.call( arguments ),
-      direction = Array.prototype.shift.call( arguments );
+robotView.update = function ( type ) {
+  switch ( type ) {
+    case 'change:position':
+      var position = arguments[ 1 ];
+      robotEle.style.left = ( position[ 0 ] - 1 ) * cellSize + 'px';
+      robotEle.style.top = ( position[ 1 ] - 1 ) * cellSize + 'px';
+      break;
+    case 'change:direction':
+      var diff = angleDiffMap[ arguments[ 1 ] ][ arguments[ 2 ] ],
+          oldAngle = getAngle(),
+          newAngle = oldAngle + diff;
 
-  robotEle.style.left = ( position[ 0 ] - 1 ) * cellSize + 'px';
-  robotEle.style.top = ( position[ 1 ] - 1 ) * cellSize + 'px';
-  robotEle.style.transform = 'rotate(' + directionMap[ direction ] + 'deg)';
+      setAngle( newAngle );
+
+      break;
+   }
 };
+
+function getAngle() {
+  if ( robotEle.style.transform === '' ) {
+    setAngle( 0 );
+    return 0;
+  } else {
+    var pattern = /\(([\d.]+)deg/;
+    return parseFloat( robotEle.style.transform.match( pattern )[ 1 ] );
+  }
+}
+
+function setAngle( value ) {
+  robotEle.style.transform = 'rotate(' + value + 'deg)';
+}
 
 module.exports = robotView;

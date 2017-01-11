@@ -4,6 +4,10 @@ var util = require( './util' ),
     init,
     isAccessible;
 
+// 绑定map模型和视图
+util.extend( new util.Subject(), map );
+map.addObserver( mapView );
+
 /**
  * 根据传入的尺寸初始化地图
  *
@@ -13,11 +17,9 @@ var util = require( './util' ),
 init = function ( width, height ) {
   var i, j;
 
-  map = {
-    data: [],
-    width: width,
-    height: height
-  };
+  map.data = [];
+  map.width = width;
+  map.height = height;
   for ( i = 1; i < height + 1; i++ ) {
     map.data[ i ] = [];
     for ( j = 1; j < width + 1; j++ ) {
@@ -25,9 +27,6 @@ init = function ( width, height ) {
     }
   }
 
-  // 绑定map模型和视图
-  util.extend( new util.Subject(), map );
-  map.addObserver( mapView );
   map.notify( 'init', map );
 };
 
@@ -38,7 +37,10 @@ init = function ( width, height ) {
  * @param { number } y
  * @returns { boolean }
  */
-isAccessible = function ( x, y ) {
+isAccessible = function ( position ) {
+  var x = position[ 0 ],
+      y = position[ 1 ];
+      
   return x > 0 && y > 0 && map.data[ y ] !== undefined && 
     map.data[ y ][ x ] !== undefined;
 };
