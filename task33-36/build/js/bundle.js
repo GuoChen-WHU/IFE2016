@@ -1,20 +1,90 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var robotController = require( './robotController' ),
+    util = require( './util' ),
     commandInput = document.getElementsByClassName( 'console-input' )[ 0 ],
     executeButton = document.getElementsByClassName( 'console-execute' )[ 0 ],
-    clearButton = document.getElementsByClassName( 'console-clear' )[ 0 ];
+    clearButton = document.getElementsByClassName( 'console-clear' )[ 0 ],
+    indicator = document.getElementsByClassName( 'row-indicator' )[ 0 ],
+    indicatorBody = document.getElementsByClassName( 'indicator-body' )[ 0 ],
+    currentRow = 3,
+    executeNext,
+    index = -1,
+    resetLast,
+    resetAll,
+    errorRows = [],
+    commands;
 
 commandInput.value = 'MOV RIG\nGO\nGO';
 
 executeButton.addEventListener( 'click', function () {
-  var commands = commandInput.value.split( '\n' );
-  robotController.handlerExecute( commands );
+  commands = commandInput.value.split( '\n' );
+  resetAll();
+  executeNext();
 });
+
+executeNext = function () {
+  var command = commands.shift().trim();
+  // 前一行的高亮去掉
+  if ( index >= 0 ) {
+    util.removeClass( indicatorBody.children[ index ], 'processing' );
+  }
+  index++;
+  // 当前行号高亮
+  util.addClass( indicatorBody.children[ index ], 'processing' );
+  // robotController处理命令
+  if ( !robotController.handlerCommand( command ) ) {
+    util.addClass( indicatorBody.children[ index ], 'error' );
+    errorRows.push( index );
+  }
+  if ( commands.length ) {
+    setTimeout( executeNext, 1000 );
+  } else {
+    setTimeout( resetLast, 1000 );
+  }
+};
+
+resetLast = function () {
+  util.removeClass( indicatorBody.children[ index ], 'processing' );
+};
+
+resetAll = function () {
+  index = -1;
+  errorRows.forEach( function ( index ) {
+    util.removeClass( indicatorBody.children[ index ], 'error' );
+  });
+};
 
 clearButton.addEventListener( 'click', function () {
   commandInput.value = '';
 });
-},{"./robotController":5}],2:[function(require,module,exports){
+
+commandInput.addEventListener( 'scroll', function ( e ) {
+  indicator.scrollTop = e.target.scrollTop;
+});
+
+commandInput.addEventListener( 'keyup', function ( e ) {
+  var rowNum = e.target.value.split( '\n' ).length,
+      diff = rowNum - currentRow,
+      i,
+      row;
+
+  if ( diff === 0 ) return;
+  else if ( diff > 0 ) {
+    for ( i = 0; i < diff; i++ ) {
+      row = document.createElement( 'tr' );
+      row.innerHTML = '<td>' + ( currentRow + 1 ) + '</td>';
+      indicatorBody.appendChild( row );
+      currentRow++;
+    }
+  } else {
+    for ( i = 0; i < -diff; i++ ) {
+      indicatorBody.removeChild( indicatorBody.lastElementChild );
+      currentRow--;
+    }
+  }
+  
+});
+},{"./robotController":5,"./util":8}],2:[function(require,module,exports){
 var mapModel = require( './mapModel' ),
     mapView = require( './mapView' ),
     robotModel = require( './robotModel' ),
@@ -126,11 +196,9 @@ module.exports = mapView;
 var robotModel = require( './robotModel' ),
     mapModel = require( './mapModel' ),
     robotController = {},
-    execute,
     forward,
     turn,
     tra,
-    turnAndMove,
     turnMap = {
       left: {
         left: 'bottom',
@@ -154,57 +222,67 @@ var robotModel = require( './robotModel' ),
       }
     };
 
-robotController.handlerExecute = function ( commands ) {
-  executeOne();
+robotController.handlerCommand = function ( command ) {
+  var success = false,
+      step,
+      i,
+      dirc;
 
-  function executeOne () {
-    var command = commands.shift();
-    execute( command );
-    if ( commands.length ) {
-      setTimeout( executeOne, 1000 );
+  // GO命令
+  var goRegExp = /^GO(?:\s(\d+))?$/,
+      goMatchResult = command.match( goRegExp );
+  if ( goMatchResult ) {
+    // 没有捕获到移动步数，那就是移动一步
+    step = parseInt( goMatchResult[ 1 ] ) || 1;
+    for ( i = 0; i < step; i++ ) {
+      success = forward();
+      if ( !success ) return success;
     }
+    return success;
   }
-};
 
-execute = function ( command ) {
+  // TRA命令
+  var traRegExp = /^TRA\s(TOP|LEF|RIG|BOT)(?:\s(\d+))?$/,
+      traMatchResult = command.match( traRegExp );
+  if ( traMatchResult ) {
+    dirc = traMatchResult[ 1 ];
+    step = parseInt( traMatchResult[ 2 ] ) || 1;
+    for ( i = 0; i < step; i++ ) {
+      success = tra( dirc );
+      if ( !success ) return success;
+    }
+    return success;
+  }
+
+  // MOV命令
+  var movRegExp = /^MOV\s(TOP|LEF|RIG|BOT)(?:\s(\d+))?$/,
+      movMatchResult = command.match( movRegExp ),
+      dircTransMap = { TOP: 'top', LEF: 'left', RIG: 'right', BOT: 'bottom' };
+  if ( movMatchResult ) {
+    dirc = dircTransMap[ movMatchResult[ 1 ] ];
+    step = parseInt( movMatchResult[ 2 ] ) || 1;
+    // 先转向
+    robotModel.setDirection( dirc );
+    // 再forward
+    for ( i = 0; i < step; i++ ) {
+      success = forward();
+      if ( !success ) return success;
+    }
+    return success;
+  }
+
   switch ( command ) {
-    case 'GO':
-      forward();
-      break;
     case 'TUN LEF':
-      turn( 'left' );
+      success = turn( 'left' );
       break;
     case 'TUN RIG':
-      turn( 'right' );
+      success = turn( 'right' );
       break;
     case 'TUN BAC':
-      turn( 'back' );
-      break;
-    case 'TRA LEF':
-      tra( 'left' );
-      break;
-    case 'TRA TOP':
-      tra( 'top' );
-      break;
-    case 'TRA RIG':
-      tra( 'right' );
-      break;
-    case 'TRA BOT':
-      tra( 'bottom' );
-      break;
-    case 'MOV LEF':
-      turnAndMove( 'left' );
-      break;
-    case 'MOV TOP':
-      turnAndMove( 'top' );
-      break;
-    case 'MOV RIG':
-      turnAndMove( 'right' );
-      break;
-    case 'MOV BOT':
-      turnAndMove( 'bottom' );
+      success = turn( 'back' );
       break;
   }
+  return success;
 };
 
 forward = function () {
@@ -227,6 +305,9 @@ forward = function () {
   }
   if ( mapModel.isAccessible( [ resultX, resultY ] ) ) {
     robotModel.setPosition( [ resultX, resultY ] );
+    return true;
+  } else {
+    return false;
   }
 };
 
@@ -234,6 +315,7 @@ turn = function ( drctChange ) {
   var direction = robotModel.direction;
 
   robotModel.setDirection( turnMap[ direction ][ drctChange ] );
+  return true;
 };
 
 tra = function ( dirc ) {
@@ -241,28 +323,25 @@ tra = function ( dirc ) {
       resultY = robotModel.position[ 1 ];
 
   switch ( dirc ) {
-    case 'left':
+    case 'LEF':
       resultX--;
       break;
-    case 'top':
+    case 'TOP':
       resultY--;
       break;
-    case 'right':
+    case 'RIG':
       resultX++;
       break;
-    case 'bottom':
+    case 'BOT':
       resultY++;
       break;
   }
   if ( mapModel.isAccessible( [ resultX, resultY ] ) ) {
     robotModel.setPosition( [ resultX, resultY ] );
+    return true;
+  } else {
+    return false;
   }
-};
-
-turnAndMove = function ( dirc ) {
-  robotModel.setDirection( dirc );
-  // 两个动作分开
-  setTimeout( forward, 300 );
 };
 
 module.exports = robotController;
@@ -446,9 +525,28 @@ function extend( obj, extension ) {
   }
 }
 
+function hasClass ( ele, className ) {
+  return (' ' + ele.className + ' ').indexOf( ' ' + className + ' ' ) != -1;
+}
+
+function addClass ( ele, className ) {
+  if ( !hasClass( ele, className )) {
+    ele.className = (ele.className + ' ' + className).trim();
+  }
+}
+
+function removeClass ( ele, className ) {
+  if ( hasClass( ele, className )) {
+    ele.className = ele.className.replace( className, '' ).trim();
+  }
+}
+
 module.exports = {
   Subject: Subject,
   Observer: Observer,
-  extend: extend
+  extend: extend,
+  hasClass: hasClass,
+  addClass: addClass,
+  removeClass: removeClass
 };
 },{}]},{},[1,2,3,4,5,6,7,8]);

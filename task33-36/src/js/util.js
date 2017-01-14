@@ -68,8 +68,27 @@ function extend( obj, extension ) {
   }
 }
 
+function hasClass ( ele, className ) {
+  return (' ' + ele.className + ' ').indexOf( ' ' + className + ' ' ) != -1;
+}
+
+function addClass ( ele, className ) {
+  if ( !hasClass( ele, className )) {
+    ele.className = (ele.className + ' ' + className).trim();
+  }
+}
+
+function removeClass ( ele, className ) {
+  if ( hasClass( ele, className )) {
+    ele.className = ele.className.replace( className, '' ).trim();
+  }
+}
+
 module.exports = {
   Subject: Subject,
   Observer: Observer,
-  extend: extend
+  extend: extend,
+  hasClass: hasClass,
+  addClass: addClass,
+  removeClass: removeClass
 };

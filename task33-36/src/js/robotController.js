@@ -1,11 +1,9 @@
 var robotModel = require( './robotModel' ),
     mapModel = require( './mapModel' ),
     robotController = {},
-    execute,
     forward,
     turn,
     tra,
-    turnAndMove,
     turnMap = {
       left: {
         left: 'bottom',
@@ -29,57 +27,67 @@ var robotModel = require( './robotModel' ),
       }
     };
 
-robotController.handlerExecute = function ( commands ) {
-  executeOne();
+robotController.handlerCommand = function ( command ) {
+  var success = false,
+      step,
+      i,
+      dirc;
 
-  function executeOne () {
-    var command = commands.shift();
-    execute( command );
-    if ( commands.length ) {
-      setTimeout( executeOne, 1000 );
+  // GO命令
+  var goRegExp = /^GO(?:\s(\d+))?$/,
+      goMatchResult = command.match( goRegExp );
+  if ( goMatchResult ) {
+    // 没有捕获到移动步数，那就是移动一步
+    step = parseInt( goMatchResult[ 1 ] ) || 1;
+    for ( i = 0; i < step; i++ ) {
+      success = forward();
+      if ( !success ) return success;
     }
+    return success;
   }
-};
 
-execute = function ( command ) {
+  // TRA命令
+  var traRegExp = /^TRA\s(TOP|LEF|RIG|BOT)(?:\s(\d+))?$/,
+      traMatchResult = command.match( traRegExp );
+  if ( traMatchResult ) {
+    dirc = traMatchResult[ 1 ];
+    step = parseInt( traMatchResult[ 2 ] ) || 1;
+    for ( i = 0; i < step; i++ ) {
+      success = tra( dirc );
+      if ( !success ) return success;
+    }
+    return success;
+  }
+
+  // MOV命令
+  var movRegExp = /^MOV\s(TOP|LEF|RIG|BOT)(?:\s(\d+))?$/,
+      movMatchResult = command.match( movRegExp ),
+      dircTransMap = { TOP: 'top', LEF: 'left', RIG: 'right', BOT: 'bottom' };
+  if ( movMatchResult ) {
+    dirc = dircTransMap[ movMatchResult[ 1 ] ];
+    step = parseInt( movMatchResult[ 2 ] ) || 1;
+    // 先转向
+    robotModel.setDirection( dirc );
+    // 再forward
+    for ( i = 0; i < step; i++ ) {
+      success = forward();
+      if ( !success ) return success;
+    }
+    return success;
+  }
+
   switch ( command ) {
-    case 'GO':
-      forward();
-      break;
     case 'TUN LEF':
-      turn( 'left' );
+      success = turn( 'left' );
       break;
     case 'TUN RIG':
-      turn( 'right' );
+      success = turn( 'right' );
       break;
     case 'TUN BAC':
-      turn( 'back' );
-      break;
-    case 'TRA LEF':
-      tra( 'left' );
-      break;
-    case 'TRA TOP':
-      tra( 'top' );
-      break;
-    case 'TRA RIG':
-      tra( 'right' );
-      break;
-    case 'TRA BOT':
-      tra( 'bottom' );
-      break;
-    case 'MOV LEF':
-      turnAndMove( 'left' );
-      break;
-    case 'MOV TOP':
-      turnAndMove( 'top' );
-      break;
-    case 'MOV RIG':
-      turnAndMove( 'right' );
-      break;
-    case 'MOV BOT':
-      turnAndMove( 'bottom' );
+      success = turn( 'back' );
       break;
   }
+  return success;
 };
 
 forward = function () {
@@ -102,6 +110,9 @@ forward = function () {
   }
   if ( mapModel.isAccessible( [ resultX, resultY ] ) ) {
     robotModel.setPosition( [ resultX, resultY ] );
+    return true;
+  } else {
+    return false;
   }
 };
 
@@ -109,6 +120,7 @@ turn = function ( drctChange ) {
   var direction = robotModel.direction;
 
   robotModel.setDirection( turnMap[ direction ][ drctChange ] );
+  return true;
 };
 
 tra = function ( dirc ) {
@@ -116,28 +128,25 @@ tra = function ( dirc ) {
       resultY = robotModel.position[ 1 ];
 
   switch ( dirc ) {
-    case 'left':
+    case 'LEF':
       resultX--;
       break;
-    case 'top':
+    case 'TOP':
       resultY--;
       break;
-    case 'right':
+    case 'RIG':
       resultX++;
       break;
-    case 'bottom':
+    case 'BOT':
       resultY++;
       break;
   }
   if ( mapModel.isAccessible( [ resultX, resultY ] ) ) {
     robotModel.setPosition( [ resultX, resultY ] );
+    return true;
+  } else {
+    return false;
   }
-};
-
-turnAndMove = function ( dirc ) {
-  robotModel.setDirection( dirc );
-  // 两个动作分开
-  setTimeout( forward, 300 );
 };
 
 module.exports = robotController;
