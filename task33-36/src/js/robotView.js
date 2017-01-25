@@ -23,6 +23,13 @@ var util = require( './util' ),
         bottom: -90
       }
     },
+    // 为了初始化的时候，old direction没有值的情况加的
+    angleMap = {
+      top: 0,
+      right: 90,
+      bottm: 180,
+      left: -90
+    },
     cellSize = 30;
 
 util.extend( new util.Observer(), robotView );
@@ -41,12 +48,16 @@ robotView.update = function ( type ) {
       robotEle.style.top = ( position[ 1 ] - 1 ) * cellSize + 'px';
       break;
     case 'change:direction':
-      var diff = angleDiffMap[ arguments[ 1 ] ][ arguments[ 2 ] ],
-          oldAngle = getAngle(),
-          newAngle = oldAngle + diff;
+      // 初始化的时候，old direction是undefined
+      if ( !arguments[ 1 ] ) {
+        setAngle( angleMap[ arguments[ 2 ] ] );
+      } else {
+        var diff = angleDiffMap[ arguments[ 1 ] ][ arguments[ 2 ] ],
+            oldAngle = getAngle(),
+            newAngle = oldAngle + diff;
 
-      setAngle( newAngle );
-
+        setAngle( newAngle );
+      }
       break;
    }
 };

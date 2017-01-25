@@ -7,4 +7,4 @@ var mapModel = require( './mapModel' ),
 mapView.init( container );
 mapModel.init( 20, 20 );
 robotView.init( container );
-robotModel.init();
+robotModel.init( 2, 2, 'top' );

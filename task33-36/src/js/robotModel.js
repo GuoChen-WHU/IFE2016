@@ -13,15 +13,13 @@ robotModel.addObserver( robotView );
  * @param { string } direction
  */
 robotModel.init = function ( x, y, direction ) {
-  this.position = [ 1, 1 ];
-  this.direction = 'top';
-
-  this.notify( this.position, this.direction );
+  this.setPosition( [ x, y ] );
+  this.setDirection( direction );
 };
 
 robotModel.setPosition = function ( position ) {
-  var oldX = this.position[ 0 ],
-      oldY = this.position[ 1 ];
+  var oldX = this.position && this.position[ 0 ],
+      oldY = this.position && this.position[ 1 ];
 
   if ( oldX !== position[ 0 ] || oldY !== position[ 1 ] ) {
     this.position = position;
@@ -29,11 +27,19 @@ robotModel.setPosition = function ( position ) {
   }
 };
 
+robotModel.getPosition = function () {
+  return this.position;
+};
+
 robotModel.setDirection = function ( direction ) {
   if ( this.direction !== direction ) {
     this.notify( 'change:direction', this.direction, direction );
     this.direction = direction;
   }
+};
+
+robotModel.getDirection = function () {
+  return this.direction;
 };
 
 module.exports = robotModel;

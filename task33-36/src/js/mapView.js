@@ -12,12 +12,19 @@ mapView.init = function ( container ) {
 };
 
 mapView.update = function () {
-  var type = Array.prototype.shift.call( arguments ),
-      map = Array.prototype.shift.call( arguments );
+  var type = Array.prototype.shift.call( arguments );
 
   switch ( type ) {
     case 'init':
-      this.render( map.width, map.height );
+      var width = Array.prototype.shift.call( arguments ),
+          height = Array.prototype.shift.call( arguments );
+      this.render( width, height );
+      break;
+    case 'cellChange':
+      var x = Array.prototype.shift.call( arguments ),
+          y = Array.prototype.shift.call( arguments ),
+          data = Array.prototype.shift.call( arguments );
+      this.updateCell( x, y, data );
       break;
   }
 };
@@ -38,6 +45,13 @@ mapView.render = function ( width, height ) {
     }
     mapEle.appendChild( row );
   }
+};
+
+mapView.updateCell = function ( x, y, data ) {
+  var coorAttr = x + ',' + y;
+      cell = document.querySelector( '[coordinate="' + coorAttr + '"]' );
+
+  cell.style.backgroundColor = data.color;
 };
 
 module.exports = mapView;

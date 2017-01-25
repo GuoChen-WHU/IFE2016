@@ -2,6 +2,9 @@ var util = require( './util' ),
     mapView = require( './mapView' ),
     map = {},
     init,
+    setCell,
+    getWidth,
+    getHeight,
     isAccessible;
 
 // 绑定map模型和视图
@@ -27,7 +30,22 @@ init = function ( width, height ) {
     }
   }
 
-  map.notify( 'init', map );
+  map.notify( 'init', map.width, map.height );
+};
+
+setCell = function ( position, data ) {
+  var x = position[ 0 ],
+      y = position[ 1 ];
+  map.data[ y ][ x ] = data;
+  map.notify( 'cellChange', x, y, map.data[ y ][ x ] );
+};
+
+getWidth = function () {
+  return map.width;
+};
+
+getHeight = function () {
+  return map.height;
 };
 
 /**
@@ -41,11 +59,14 @@ isAccessible = function ( position ) {
   var x = position[ 0 ],
       y = position[ 1 ];
       
-  return x > 0 && y > 0 && map.data[ y ] !== undefined && 
-    map.data[ y ][ x ] !== undefined;
+  return x > 0 && y > 0 && map.data[ y ] && map.data[ y ][ x ] &&
+    !map.data[ y ][ x ].color; // 没有color属性就没有墙
 };
 
 module.exports = {
   init: init,
+  setCell: setCell,
+  getWidth: getWidth,
+  getHeight: getHeight,
   isAccessible: isAccessible
 };
