@@ -5,7 +5,8 @@ var util = require( './util' ),
     setCell,
     getWidth,
     getHeight,
-    isAccessible;
+    isAccessible,
+    getNeighbors;
 
 // 绑定map模型和视图
 util.extend( new util.Subject(), map );
@@ -59,8 +60,29 @@ isAccessible = function ( position ) {
   var x = position[ 0 ],
       y = position[ 1 ];
       
-  return x > 0 && y > 0 && map.data[ y ] && map.data[ y ][ x ] &&
-    !map.data[ y ][ x ].color; // 没有color属性就没有墙
+  // 没有color属性就没有墙
+  return isInside( position ) && !map.data[ y ][ x ].color;
+};
+
+isInside = function ( position ) {
+  var x = position[ 0 ],
+      y = position[ 1 ];
+      
+  return x > 0 && y > 0 && x <= map.width && y <= map.height;
+};
+
+var neighbors = [ [ -1, -1 ], [ -1, 0 ], [ -1, 1 ], [ 0, -1 ], [ 0, 1 ],
+                  [ 1, -1 ], [ 1, 0 ], [ 1, 1 ] ];
+
+getNeighbors = function ( position ) {
+  var x = position[ 0 ],
+      y = position[ 1 ];
+
+  return neighbors.map( function ( neighbor ) {
+    if ( isAccessible( x + neighbor[ 0 ], y + neighbor[ 1 ] ) ) {
+      return [ x + neighbor[ 0 ], y + neighbor[ 1 ] ];
+    }
+  });
 };
 
 module.exports = {
