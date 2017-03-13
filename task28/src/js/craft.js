@@ -1,12 +1,13 @@
 /*
  * 飞船模块
 */
-import { BUS } from './BUS.js';
-import { shell } from './shell.js';
-import { adapter } from './adapter.js';
-import { addMessage } from './shell.console.js';
+var globalEvent = require('./globalEvent.js');
 
-const ANIMATION_INTERVAL = 50,
+var BUS = require('./BUS.js');
+var adapter = require('./adapter.js');
+var addMessage = require('./shell.console.js').addMessage;
+
+var ANIMATION_INTERVAL = 50,
       EMIT_INTERVAL = 1000,
 
       // 动力系统
@@ -77,11 +78,11 @@ createCraft = function ( dynamicSys, energySys ) {
           });
         } else {
           // 让shell渲染移动效果
-          shell.moveCraft( this.id, this.dynamicSys.moveSpeed * ANIMATION_INTERVAL / 1000 );
+          globalEvent.trigger( 'move', this.id, this.dynamicSys.moveSpeed * ANIMATION_INTERVAL / 1000 );
 
           this.energy -= this.dynamicSys.consumeSpeed *
               ANIMATION_INTERVAL / 1000;
-          shell.changeEnergy( this.id, this.energy );
+          globalEvent.trigger( 'energyChange', this.id, this.energy );
 
           this.timer = setTimeout( moving.bind( this ), ANIMATION_INTERVAL );
         }
@@ -107,7 +108,7 @@ createCraft = function ( dynamicSys, energySys ) {
           this.timer = setTimeout( stopping.bind( this ), 
             ANIMATION_INTERVAL );
         }
-        shell.changeEnergy( this.id, this.energy );
+        globalEvent.trigger( 'energyChange', this.id, this.energy );
       }.bind( this ), ANIMATION_INTERVAL );
     }
   };
@@ -128,7 +129,7 @@ createCraft = function ( dynamicSys, energySys ) {
       energy: this.energy
     });
 
-    shell.destroyCraft( this.id );
+    globalEvent.trigger( 'destroy', this.id );
     BUS.remove( 'command', this.receiver );
     usableIds.push( this.id );
 
@@ -198,8 +199,7 @@ createCraft = function ( dynamicSys, energySys ) {
     self.emitter = setTimeout( emitStatus, EMIT_INTERVAL );
   }, EMIT_INTERVAL );
 
-  // 让shell进行渲染
-  shell.createCraft( craft.id, craft.track );
+  globalEvent.trigger( 'create', craft.id, craft.track );
 
   // 模块内保存该craft的引用，销毁时用于删除
   stateMap[ 'craft' + craft.id ] = craft;
@@ -207,4 +207,6 @@ createCraft = function ( dynamicSys, energySys ) {
   return craft;
 };
 
-export { createCraft };
+module.exports = {
+  createCraft: createCraft
+};

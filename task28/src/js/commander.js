@@ -1,11 +1,11 @@
 /*
  * 指挥官模块
 */
-import { createCraft } from './craft.js';
-import { BUS } from './BUS.js';
-import { adapter } from './adapter.js';
-import { dc } from './dc.js';
-import { addMessage } from './shell.console.js';
+var createCraft = require('./craft.js').createCraft;
+var BUS = require('./BUS.js');
+var adapter = require('./adapter.js');
+var dc = require('./dc.js');
+var addMessage = require('./shell.console.js').addMessage;
 
 var commander,
     create,
@@ -80,11 +80,9 @@ Command.prototype.execute = function () {
 /**
  * 指挥官对象
  */
-commander = {
+module.exports = commander = {
   create: create,
   move: move,
   stop: stop,
   destroy: destroy
 };
-
-export { commander };

@@ -49,9 +49,7 @@ function toObj ( binary ) {
   return result;
 }
 
-var adapter = {
+module.exports = {
   toBinary: toBinary,
   toObj   : toObj
 };
-
-export { adapter };

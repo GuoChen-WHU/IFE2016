@@ -1,9 +1,9 @@
 /*
  * 数据中心模块
 */
-import { adapter } from './adapter.js';
-import { monitor } from './shell.monitor.js';
-import { BUS } from './BUS.js';
+var adapter = require('./adapter.js');
+var monitor = require('./shell.monitor.js').monitor;
+var BUS = require('./BUS.js');
 
 var dc,
     receiver,
@@ -58,4 +58,4 @@ dc = {
 
 BUS.listen( 'status', receiver );
 
-export { dc };
+module.exports = dc;

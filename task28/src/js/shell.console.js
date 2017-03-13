@@ -33,4 +33,7 @@ initConsole = function ( $container ) {
   setJqueryMap();
 };
 
-export { addMessage, initConsole };
+module.exports = { 
+  addMessage: addMessage,
+  initConsole: initConsole
+};

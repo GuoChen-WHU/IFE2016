@@ -76,4 +76,7 @@ monitor = {
   removeRecord: removeRecord
 };
 
-export { initMonitor, monitor };
+module.exports = { 
+  initMonitor: initMonitor, 
+  monitor: monitor
+};

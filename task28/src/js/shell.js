@@ -1,9 +1,11 @@
 /*
  * shell模块,负责主界面的渲染
 */
-import { initConsole, addMessage } from './shell.console.js';
-import { initMonitor } from './shell.monitor.js';
-import { commander } from './commander.js';
+var globalEvent = require('./globalEvent.js');
+
+var initConsole = require('./shell.console.js').initConsole;
+var initMonitor = require('./shell.monitor.js').initMonitor;
+var commander = require('./commander.js');
 
 var mainHTML = 
       '<div class="shell">' + 
@@ -153,6 +155,12 @@ init = function ( $container ) {
 
   // 按钮点击事件都委托给panel处理
   jqueryMap.$panel.bind( 'click', handleClick );
+
+  // 订阅飞船状态事件
+  globalEvent.subscribe('create', createCraft);
+  globalEvent.subscribe('move', moveCraft);
+  globalEvent.subscribe('energyChange', changeEnergy);
+  globalEvent.subscribe('destroy', destroyCraft);
 };
 
 /**
@@ -202,11 +210,6 @@ handleClick = function ( e ) {
   }
 };
 
-shell = {
-  createCraft: createCraft,
-  moveCraft: moveCraft,
-  changeEnergy: changeEnergy,
-  destroyCraft: destroyCraft,
+module.exports = { 
+  init: init 
 };
-
-export { shell, init };

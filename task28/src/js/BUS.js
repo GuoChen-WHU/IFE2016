@@ -1,9 +1,9 @@
 /*
  * BUS模块
 */
-import { addMessage } from './shell.console.js';
+var addMessage = require('./shell.console.js').addMessage;
 
-const delay = 300;
+var delay = 300;
 
 var clientList = {},
     broadcast,
@@ -41,9 +41,9 @@ broadcast = function send ( event, data ) {
  * 通知所有监听者
  */
 notify = function ( event, data ) {
-  for ( let client of clientList[ event ] ) {
+  clientList[ event ].map(function (client) {
     client.apply( null, [ data ]);
-  }
+  });
 };
 
 /**
@@ -64,7 +64,7 @@ remove = function ( event, fn ) {
   var len;
   if ( clientList[ event ] ) {
     len = clientList[ event ].length;
-    for ( let i = 0; i < len; i++ ) {
+    for ( var i = 0; i < len; i++ ) {
       if ( clientList[ event ][ i ] === fn ) {
         clientList[ event ].splice( i, 1 );
         return;
@@ -76,10 +76,8 @@ remove = function ( event, fn ) {
 /**
  * BUS对象
  */
-BUS = {
+module.exports = BUS = {
   broadcast: broadcast,
   listen: listen,
   remove: remove
 };
-
-export { BUS };

@@ -46,7 +46,7 @@ module.exports = function( grunt ) {
       },
 
       build_js: {
-        tasks: [ 'jshint', 'babel', 'browserify' ],
+        tasks: [ 'jshint', 'browserify' ],
         files: [ 'src/js/*.js' ]
       }
     },
@@ -60,45 +60,22 @@ module.exports = function( grunt ) {
     },
 
     jshint: {
-      options: {
-        esversion: 6
-      },
       files: [ 'src/js/**.js' ]
-    },
-
-    babel: {
-      options: {
-        presets: [ 'babel-preset-es2015' ]
-      },
-      dist: {
-        files: {
-          'build/js/craft.js': 'src/js/craft.js',
-          'build/js/commander.js': 'src/js/commander.js',
-          'build/js/BUS.js': 'src/js/BUS.js',
-          'build/js/shell.js': 'src/js/shell.js',
-          'build/js/shell.console.js': 'src/js/shell.console.js',
-          'build/js/shell.monitor.js': 'src/js/shell.monitor.js',
-          'build/js/adapter.js': 'src/js/adapter.js',
-          'build/js/dc.js': 'src/js/dc.js',
-          'build/js/task.js': 'src/js/task.js'
-        }
-      }
     },
 
     browserify: {
       dist: {
         files: {
           'build/js/bundle.js': [
-            'node_modules/jquery/dist/jquery.js',
-            'build/js/craft.js', 
-            'build/js/commander.js',
-            'build/js/BUS.js',
-            'build/js/shell.js',
-            'build/js/shell.console.js',
-            'build/js/shell.monitor.js',
-            'build/js/adapter.js',
-            'build/js/dc.js',
-            'build/js/task.js'
+            'src/js/craft.js', 
+            'src/js/commander.js',
+            'src/js/BUS.js',
+            'src/js/shell.js',
+            'src/js/shell.console.js',
+            'src/js/shell.monitor.js',
+            'src/js/adapter.js',
+            'src/js/dc.js',
+            'src/js/task.js'
           ]
         }
       }
@@ -110,9 +87,8 @@ module.exports = function( grunt ) {
   grunt.loadNpmTasks( 'grunt-contrib-connect' );
   grunt.loadNpmTasks( 'grunt-contrib-less' );
   grunt.loadNpmTasks( 'grunt-contrib-jshint' );
-  grunt.loadNpmTasks( 'grunt-babel' );
   grunt.loadNpmTasks( 'grunt-browserify' );
 
   grunt.registerTask( 'live', [ 'connect', 'watch' ] );
-  grunt.registerTask( 'build', [ 'less', 'jshint', 'babel', 'browserify' ] );
+  grunt.registerTask( 'build', [ 'less', 'jshint', 'browserify' ] );
 };
